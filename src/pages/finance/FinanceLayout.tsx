@@ -17,7 +17,7 @@ export default function FinanceLayout() {
         hero="Capitão América"
         emblem="shield"
         color="#e0263c"
-        image="/herois/capitao.png"
+        image="/herois/capitao-1.jpg"
         tagline="Disciplina e defesa do seu patrimônio"
       />
 

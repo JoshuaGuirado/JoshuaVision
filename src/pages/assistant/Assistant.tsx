@@ -53,7 +53,14 @@ export default function Assistant() {
           {pickerOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setPickerOpen(false)} />
-              <div className="absolute right-0 mt-2 w-72 bg-surface border border-border rounded-xl p-1 z-20 shadow-2xl">
+              {/* No celular o botão fica à esquerda, então ancorar pela direita
+                  jogava o menu para fora da tela. Lá ele abre pela esquerda e
+                  nunca passa da largura disponível. */}
+              <div
+                className="absolute left-0 sm:left-auto sm:right-0 mt-2 z-20
+                           w-[min(18rem,calc(100vw-2.5rem))] sm:w-72
+                           bg-surface border border-border rounded-xl p-1 shadow-2xl"
+              >
                 {AI_MODELS.map((m) => (
                   <button
                     key={m.id}

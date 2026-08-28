@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { FxProvider } from './lib/fx'
+import Busca from './components/Busca'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import SetupNeeded from './pages/SetupNeeded'
@@ -30,6 +32,28 @@ import { isSupabaseConfigured } from './lib/supabase'
 
 function AppRoutes() {
   const { session, loading } = useAuth()
+  const [buscaAberta, setBuscaAberta] = useState(false)
+
+  // Ctrl+K (ou ⌘K) abre a busca de qualquer tela. O `preventDefault` impede o
+  // navegador de sequestrar o atalho para a barra de endereço.
+  useEffect(() => {
+    function aoTeclar(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setBuscaAberta((v) => !v)
+      }
+    }
+    window.addEventListener('keydown', aoTeclar)
+    return () => window.removeEventListener('keydown', aoTeclar)
+  }, [])
+
+  // A Home tem um botão próprio; este evento liga os dois sem passar prop por
+  // dentro das rotas.
+  useEffect(() => {
+    const abrir = () => setBuscaAberta(true)
+    window.addEventListener('tjv:abrir-busca', abrir)
+    return () => window.removeEventListener('tjv:abrir-busca', abrir)
+  }, [])
 
   if (loading) {
     return (
@@ -75,6 +99,9 @@ function AppRoutes() {
 
       {/* Bolha de suporte — acompanha o Joshua em todas as telas. */}
       <AssistantWidget />
+
+      {/* Busca geral: Ctrl+K de qualquer tela, ou o botão na Home. */}
+      <Busca aberta={buscaAberta} fechar={() => setBuscaAberta(false)} />
     </>
   )
 }

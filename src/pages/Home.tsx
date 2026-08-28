@@ -1,4 +1,4 @@
-import { LogOut } from 'lucide-react'
+import { LogOut, Search } from 'lucide-react'
 import { MODULES } from '../lib/nav'
 import { LogoMark } from '../components/Logo'
 import ModuleCard from '../components/ModuleCard'
@@ -35,13 +35,23 @@ export default function Home() {
             </p>
           </div>
 
-          <button
-            onClick={signOut}
-            className="text-text-faint hover:text-accent transition-colors p-2 -mr-2"
-            aria-label="Sair"
-          >
-            <LogOut size={18} />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => window.dispatchEvent(new Event('tjv:abrir-busca'))}
+              className="text-text-faint hover:text-accent transition-colors p-2"
+              aria-label="Buscar"
+              title="Buscar (Ctrl+K)"
+            >
+              <Search size={18} />
+            </button>
+            <button
+              onClick={signOut}
+              className="text-text-faint hover:text-accent transition-colors p-2 -mr-2"
+              aria-label="Sair"
+            >
+              <LogOut size={18} />
+            </button>
+          </div>
         </header>
 
         <div className="tjv-fade mb-10 sm:mb-12" style={{ animationDelay: '80ms' }}>

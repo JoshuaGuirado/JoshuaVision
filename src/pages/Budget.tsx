@@ -8,13 +8,16 @@ export default function Budget() {
   const [categories, setCategories] = useState<Category[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    Promise.all([fetchCategories(), fetchTransactions()]).then(([cats, tx]) => {
-      setCategories(cats)
-      setTransactions(tx)
-      setLoading(false)
-    })
+    Promise.all([fetchCategories(), fetchTransactions()])
+      .then(([cats, tx]) => {
+        setCategories(cats)
+        setTransactions(tx)
+      })
+      .catch(() => setError('Não consegui carregar os dados. As tabelas já foram criadas no Supabase?'))
+      .finally(() => setLoading(false))
   }, [])
 
   const { start, end } = currentMonthRange()
@@ -36,8 +39,9 @@ export default function Budget() {
       <h1 className="text-xl font-bold">Orçamento do mês</h1>
 
       {loading && <p className="text-text-dim text-sm">Carregando...</p>}
+      {error && <p className="text-danger text-sm">{error}</p>}
 
-      {!loading && withBudget.length === 0 && (
+      {!loading && !error && withBudget.length === 0 && (
         <p className="text-text-dim text-sm">
           Nenhuma categoria com orçamento definido. Configure um orçamento mensal em Categorias.
         </p>
@@ -78,7 +82,7 @@ export default function Budget() {
         })}
       </div>
 
-      {!loading && withoutBudget.length > 0 && (
+      {!loading && !error && withoutBudget.length > 0 && (
         <div>
           <h2 className="text-sm font-semibold text-text-dim mb-2">Sem orçamento definido</h2>
           <div className="space-y-2">

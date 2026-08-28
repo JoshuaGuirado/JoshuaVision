@@ -11,12 +11,19 @@ const COLORS = ['#f5c518', '#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899'
 export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [editing, setEditing] = useState<Category | 'new' | null>(null)
 
   async function load() {
     setLoading(true)
-    setCategories(await fetchCategories())
-    setLoading(false)
+    setError(null)
+    try {
+      setCategories(await fetchCategories())
+    } catch {
+      setError('Não consegui carregar os dados. As tabelas já foram criadas no Supabase?')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -42,7 +49,8 @@ export default function Categories() {
       </div>
 
       {loading && <p className="text-text-dim text-sm">Carregando...</p>}
-      {!loading && categories.length === 0 && (
+      {error && <p className="text-danger text-sm">{error}</p>}
+      {!loading && !error && categories.length === 0 && (
         <p className="text-text-dim text-sm">Nenhuma categoria ainda. Crie a primeira.</p>
       )}
 

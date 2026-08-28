@@ -15,14 +15,21 @@ export default function Transactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
 
   async function load() {
     setLoading(true)
-    const [tx, cats] = await Promise.all([fetchTransactions(), fetchCategories()])
-    setTransactions(tx)
-    setCategories(cats)
-    setLoading(false)
+    setError(null)
+    try {
+      const [tx, cats] = await Promise.all([fetchTransactions(), fetchCategories()])
+      setTransactions(tx)
+      setCategories(cats)
+    } catch {
+      setError('Não consegui carregar os dados. As tabelas já foram criadas no Supabase?')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -50,7 +57,8 @@ export default function Transactions() {
       </div>
 
       {loading && <p className="text-text-dim text-sm">Carregando...</p>}
-      {!loading && transactions.length === 0 && (
+      {error && <p className="text-danger text-sm">{error}</p>}
+      {!loading && !error && transactions.length === 0 && (
         <p className="text-text-dim text-sm">Nenhum lançamento ainda.</p>
       )}
 

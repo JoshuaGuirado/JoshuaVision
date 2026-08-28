@@ -1,8 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { X, Send, ChevronDown, Maximize2 } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
+import { X, Send, ChevronDown, Maximize2, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AI_MODELS, DEFAULT_MODEL_ID, findModel } from '../lib/models'
 import { useChat } from '../lib/useChat'
+import { useFx } from '../lib/fx'
+import { useEscuta, escutaDisponivel } from '../lib/useEscuta'
+import { extrairChamado, interpretar } from '../lib/comandosDeVoz'
 import HeroAvatar from './HeroAvatar'
 import { useTemModalAberto } from './Modal'
 
@@ -22,6 +25,8 @@ export default function AssistantWidget() {
   const [input, setInput] = useState('')
   const { messages, sending, error, send } = useChat()
   const bottomRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate()
+  const { prefs, setPref, speak, hush } = useFx()
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -34,6 +39,55 @@ export default function AssistantWidget() {
     setInput('')
     await send(text, modelId)
   }
+
+  // "Friday, para de ouvir" precisa desligar a escuta, mas o `useEscuta` só
+  // existe depois deste callback. A ref quebra essa dependência circular.
+  const pararEscuta = useRef<(() => void) | null>(null)
+
+  /**
+   * Cada frase ouvida passa por aqui. Só age quando a F.R.I.D.A.Y. foi chamada
+   * pelo nome — senão qualquer conversa no ambiente viraria comando.
+   */
+  const aoOuvir = useCallback(
+    (frase: string) => {
+      const pedido = extrairChamado(frase)
+      if (pedido === null) return
+
+      if (pedido === '') {
+        speak('Pois não, Joshua.', undefined, true)
+        setOpen(true)
+        return
+      }
+
+      const comando = interpretar(pedido)
+
+      switch (comando.tipo) {
+        case 'navegar':
+          navigate(comando.rota)
+          speak(`Abrindo ${comando.rotulo}.`, undefined, true)
+          return
+        case 'silenciar':
+          hush()
+          setPref('voice', false)
+          return
+        case 'falar':
+          setPref('voice', true)
+          speak('Voltei, Joshua.', undefined, true)
+          return
+        case 'parar-escuta':
+          pararEscuta.current?.()
+          return
+        case 'perguntar':
+          setOpen(true)
+          send(comando.texto, modelId)
+          return
+      }
+    },
+    [navigate, speak, hush, setPref, send, modelId],
+  )
+
+  const escuta = useEscuta(aoOuvir)
+  pararEscuta.current = escuta.parar
 
   const model = findModel(modelId)
 
@@ -104,6 +158,39 @@ export default function AssistantWidget() {
           )}
         </div>
 
+        {/* Mudo fica aqui, à mão: antes era preciso ir até Configurações só
+            para calar a F.R.I.D.A.Y. no meio de uma conversa. */}
+        <button
+          onClick={() => {
+            const ligando = !prefs.voice
+            setPref('voice', ligando)
+            if (ligando) speak('Voz ligada.', undefined, true)
+            else hush()
+          }}
+          className={`transition-colors p-1.5 -m-0.5 ${
+            prefs.voice ? 'text-accent' : 'text-text-faint hover:text-text'
+          }`}
+          aria-label={prefs.voice ? 'Silenciar a voz' : 'Ligar a voz'}
+          title={prefs.voice ? 'Silenciar' : 'Deixar falar'}
+        >
+          {prefs.voice ? <Volume2 size={16} /> : <VolumeX size={16} />}
+        </button>
+
+        {escutaDisponivel() && (
+          <button
+            onClick={escuta.alternar}
+            className={`transition-colors p-1.5 -m-0.5 ${
+              escuta.estado === 'ouvindo'
+                ? 'text-accent tjv-pulse rounded-full'
+                : 'text-text-faint hover:text-text'
+            }`}
+            aria-label={escuta.estado === 'ouvindo' ? 'Parar de ouvir' : 'Falar com a F.R.I.D.A.Y.'}
+            title={escuta.estado === 'ouvindo' ? 'Ouvindo — diga "Friday..."' : 'Comandar por voz'}
+          >
+            {escuta.estado === 'ouvindo' ? <Mic size={16} /> : <MicOff size={16} />}
+          </button>
+        )}
+
         <Link
           to="/assistente"
           onClick={() => setOpen(false)}
@@ -120,6 +207,24 @@ export default function AssistantWidget() {
           <X size={17} />
         </button>
       </header>
+
+      {/* Enquanto ouve, mostra o que está entendendo — sem isso o Joshua não
+          saberia se o microfone pegou a frase. */}
+      {escuta.estado === 'ouvindo' && (
+        <div className="px-4 py-2 bg-accent/10 border-b border-accent/20 shrink-0">
+          <p className="text-[11px] text-accent truncate">
+            {escuta.parcial || 'Ouvindo… diga "Friday, abre finanças"'}
+          </p>
+        </div>
+      )}
+
+      {escuta.estado === 'sem-permissao' && (
+        <div className="px-4 py-2 bg-danger/10 border-b border-danger/20 shrink-0">
+          <p className="text-[11px] text-danger">
+            O navegador bloqueou o microfone. Libere nas permissões do site.
+          </p>
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 && (

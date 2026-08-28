@@ -66,8 +66,9 @@ export default function HeroSpeech({
       setTyped(full.slice(0, i))
       if (i >= full.length) window.clearInterval(timer.current)
     }, 26)
-    // Se a voz estiver ligada, ele fala junto com o texto aparecendo.
-    fx.speak(full)
+    // Se a voz estiver ligada, ele fala junto com o texto aparecendo — no
+    // tom e na velocidade deste herói.
+    fx.speak(full, voice.voz)
     return () => window.clearInterval(timer.current)
   }, [full])
 

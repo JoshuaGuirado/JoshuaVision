@@ -7,7 +7,6 @@ import SetupNeeded from './pages/SetupNeeded'
 import Home from './pages/Home'
 import Settings from './pages/Settings'
 import AssistantWidget from './components/AssistantWidget'
-import QuickAdd from './components/QuickAdd'
 import Today from './pages/modules/Today'
 import Agenda from './pages/modules/Agenda'
 import Tasks from './pages/modules/Tasks'
@@ -66,8 +65,7 @@ function AppRoutes() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {/* Bolha de suporte e atalho de criar — acompanham o Joshua em todas as telas. */}
-      <QuickAdd />
+      {/* Bolha de suporte — acompanha o Joshua em todas as telas. */}
       <AssistantWidget />
     </>
   )

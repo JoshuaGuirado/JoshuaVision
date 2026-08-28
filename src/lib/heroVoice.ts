@@ -31,6 +31,14 @@ export type HeroVoice = {
   bang: string
   /** Som que acompanha o estouro. */
   bangKind: BangKind
+  /**
+   * Como este herói soa quando fala em voz alta.
+   *
+   * O aparelho costuma ter só duas vozes em português, então o que separa um
+   * herói do outro é o tom (`pitch`) e a velocidade (`rate`): o Thor sai
+   * grave e pausado, o Aranha agudo e acelerado.
+   */
+  voz: { genero: 'm' | 'f'; pitch: number; rate: number }
 }
 
 export const HERO_VOICES: Record<string, HeroVoice> = {
@@ -45,6 +53,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Reunir',
     bang: 'AVANTE!',
     bangKind: 'impact',
+    voz: { genero: 'm', pitch: 0.9, rate: 1 },
     greeting: 'Vingadores reunidos, Joshua. Este é o painel do seu dia — a gente cobre o resto.',
     lines: [
       'Um dia de cada vez. Hoje a missão é só esta aqui.',
@@ -64,6 +73,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Abrir portal',
     bang: 'VOOSH!',
     bangKind: 'tech',
+    voz: { genero: 'm', pitch: 0.85, rate: 0.92 },
     greeting: 'Olá, Joshua. Doutor Estranho. Eu cuido do tempo — e o seu está todo aqui.',
     lines: [
       'Vi catorze milhões de agendas possíveis. Nesta você chega no horário.',
@@ -85,6 +95,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Registrar',
     bang: 'CLANG!',
     bangKind: 'shield',
+    voz: { genero: 'm', pitch: 0.82, rate: 0.95 },
     greeting: 'Olá, Joshua. Capitão América falando. Vamos controlar suas finanças.',
     lines: [
       'Disciplina não é castigo, é escudo. Todo mês ele te protege um pouco mais.',
@@ -104,6 +115,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Executar',
     bang: 'BLAM!',
     bangKind: 'tech',
+    voz: { genero: 'm', pitch: 1.08, rate: 1.18 },
     greeting: 'E aí, Joshua. Tony Stark. Sua lista de tarefas — vamos executar isso com estilo.',
     lines: [
       'Gênio, bilionário, playboy, filantropo. E organizado. Principalmente organizado.',
@@ -123,6 +135,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Lançar teia',
     bang: 'THWIP!',
     bangKind: 'web',
+    voz: { genero: 'm', pitch: 1.35, rate: 1.2 },
     greeting: 'Oi, Joshua! Peter Parker aqui. Bora mirar longe? Estas são as suas metas.',
     lines: [
       'Com grandes metas vêm grandes responsabilidades. Mas a gente dá conta.',
@@ -138,6 +151,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Forjar',
     bang: 'KRAKOOM!',
     bangKind: 'thunder',
+    voz: { genero: 'm', pitch: 0.68, rate: 0.88 },
     greeting: 'Saudações, Joshua! Thor, filho de Odin. Aqui forjamos os seus hábitos.',
     lines: [
       'O martelo só obedece a quem é digno. A constância é o que te torna digno.',
@@ -157,6 +171,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Fundar',
     bang: 'SHRAK!',
     bangKind: 'impact',
+    voz: { genero: 'm', pitch: 0.78, rate: 0.9 },
     greeting:
       'Bem-vindo, Joshua. Aqui é o Pantera Negra. Todo grande projeto se constrói como Wakanda: com paciência.',
     lines: [
@@ -173,6 +188,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Estudar',
     bang: 'SMASH!',
     bangKind: 'impact',
+    voz: { genero: 'm', pitch: 0.95, rate: 0.86 },
     greeting: 'Oi, Joshua. Bruce Banner. Conhecimento é a força que eu escolhi controlar.',
     lines: [
       'Meu segredo? Eu estudo sempre. É assim que eu não perco o controle.',
@@ -192,6 +208,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Registrar',
     bang: 'WHOOSH!',
     bangKind: 'tech',
+    voz: { genero: 'm', pitch: 1.18, rate: 1.16 },
     greeting: 'Fala, Joshua! Guardiões na área. Corpo em dia, missão em dia — é essa a regra.',
     lines: [
       'Eu sou Groot. (Ele disse: bebe água.)',
@@ -207,6 +224,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Guardar',
     bang: 'ZAP!',
     bangKind: 'tech',
+    voz: { genero: 'f', pitch: 0.9, rate: 0.84 },
     greeting: 'Olá, Joshua. Sou a Visão. Aquilo que você anota aqui, eu guardo por você.',
     lines: [
       'A memória humana é frágil e bela. A minha é apenas confiável.',
@@ -222,6 +240,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Chamar',
     bang: 'BIP!',
     bangKind: 'tech',
+    voz: { genero: 'f', pitch: 1.12, rate: 1.06 },
     greeting: 'Olá, chefe. F.R.I.D.A.Y. online. Seu esquadrão de IA está pronto.',
     lines: [
       'Escolha um herói do esquadrão e me diga o que precisa.',
@@ -237,6 +256,7 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
     action: 'Ajustar',
     bang: 'CHAMAS!',
     bangKind: 'impact',
+    voz: { genero: 'f', pitch: 1, rate: 1.08 },
     greeting: 'Olá, Joshua. Quarteto Fantástico. É aqui que a gente ajusta a máquina toda.',
     lines: [
       'Tudo pode ser melhorado. Inclusive as configurações.',

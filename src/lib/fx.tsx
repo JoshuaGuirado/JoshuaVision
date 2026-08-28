@@ -26,15 +26,55 @@ export type BangKind = 'impact' | 'shield' | 'thunder' | 'web' | 'tech'
 
 type Burst = { id: number; word: string; color: string }
 
-type FxPrefs = { sound: boolean; voice: boolean; motion: boolean }
+type FxPrefs = {
+  sound: boolean
+  voice: boolean
+  motion: boolean
+  /** Voz escolhida nas Configurações; vazio = a que o aparelho oferecer. */
+  vozMasculina?: string
+  vozFeminina?: string
+}
+
+/** Como um herói soa: tom e velocidade em cima da voz do aparelho. */
+export type PerfilVoz = { genero: 'm' | 'f'; pitch: number; rate: number }
+
+/**
+ * ARRUMA O TEXTO ANTES DE FALAR.
+ *
+ * O que está escrito na tela nem sempre é o que soa bem. A voz do aparelho
+ * lia "F.R.I.D.A.Y." letra por letra ("efe, erre, i, dê...") e "R$ 100" como
+ * "erre cifrão cem". Aqui o texto vira a versão falada, sem mudar o que o
+ * Joshua lê.
+ */
+function paraFala(texto: string): string {
+  return (
+    texto
+      .replace(/F\.?R\.?I\.?D\.?A\.?Y\.?/gi, 'Fraidei')
+      // "R$ 1.234,50" -> "1.234,50 reais"
+      .replace(/R\$\s*(-?[\d.,]+)/g, '$1 reais')
+      .replace(/(\d)\s*%/g, '$1 por cento')
+      .replace(/\bIA\b/g, 'inteligência artificial')
+      // travessão vira pausa: senão a voz emenda as duas frases
+      .replace(/\s*[—–]\s*/g, ', ')
+  )
+}
+
+/** Vozes em português disponíveis neste aparelho. */
+export function vozesDisponiveis(): SpeechSynthesisVoice[] {
+  if (!('speechSynthesis' in window)) return []
+  const todas = window.speechSynthesis.getVoices()
+  const pt = todas.filter((v) => v.lang.toLowerCase().startsWith('pt'))
+  // Sem nenhuma em português, é melhor oferecer as outras do que nada.
+  return pt.length ? pt : todas
+}
 
 type FxValue = {
   prefs: FxPrefs
-  setPref: (key: keyof FxPrefs, value: boolean) => void
+  setPref: <K extends keyof FxPrefs>(key: K, value: FxPrefs[K]) => void
   /** Estoura a palavra na tela (e toca o som, se ligado). */
   bang: (word: string, color: string, kind?: BangKind) => void
   /** Lê um texto na voz do navegador, se o Joshua tiver ligado. */
-  speak: (text: string, forcar?: boolean) => void
+  speak: (text: string, perfil?: PerfilVoz, forcar?: boolean) => void
   /** Toca um som de amostra ignorando a preferência — usado ao ligar o som. */
   preview: (kind: BangKind) => void
   /** Cala a boca agora (troca de tela, por exemplo). */
@@ -60,11 +100,49 @@ function lerPrefs(): FxPrefs {
   }
 }
 
+/**
+ * O NAVEGADOR SÓ DEIXA TOCAR SOM DEPOIS DE UM CLIQUE.
+ *
+ * Esta era a causa de nenhum barulho sair: cada ação criava um `AudioContext`
+ * novo, e um contexto criado DEPOIS de uma espera (a gravação no banco, por
+ * exemplo) já não conta mais como "resposta a um clique" — ele nasce suspenso
+ * e fica mudo, sem erro nenhum no console.
+ *
+ * A correção é ter UM contexto só, criado no primeiro toque do Joshua na
+ * página e mantido acordado a partir dali.
+ */
+let audioCtx: AudioContext | null = null
+
+function pegarContexto(): AudioContext | null {
+  const Ctx =
+    window.AudioContext ??
+    (window as never as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+  if (!Ctx) return null
+  if (!audioCtx) audioCtx = new Ctx()
+  // o navegador suspende o contexto sozinho; acordar é barato e seguro
+  if (audioCtx.state === 'suspended') void audioCtx.resume()
+  return audioCtx
+}
+
+/** Prepara o áudio no primeiro toque na página, enquanto ainda vale o gesto. */
+function liberarAudioNoPrimeiroToque() {
+  const liberar = () => {
+    pegarContexto()
+    window.removeEventListener('pointerdown', liberar)
+    window.removeEventListener('keydown', liberar)
+  }
+  window.addEventListener('pointerdown', liberar)
+  window.addEventListener('keydown', liberar)
+  return () => {
+    window.removeEventListener('pointerdown', liberar)
+    window.removeEventListener('keydown', liberar)
+  }
+}
+
 /** Sons curtos gerados na hora — sem arquivo, sem download, sem atraso. */
 function tocar(kind: BangKind) {
-  const Ctx = window.AudioContext ?? (window as never as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-  if (!Ctx) return
-  const ctx = new Ctx()
+  const ctx = pegarContexto()
+  if (!ctx) return
   const agora = ctx.currentTime
   const saida = ctx.createGain()
   saida.gain.value = 0.28
@@ -123,9 +201,8 @@ function tocar(kind: BangKind) {
       ruido(0.26, 0.4, 900)
   }
 
-  // fecha o contexto sozinho: cada ação abre um, e o navegador limita quantos
-  // ficam vivos ao mesmo tempo.
-  window.setTimeout(() => void ctx.close(), 1200)
+  // O contexto NÃO é fechado: ele é um só para o site inteiro e precisa
+  // continuar vivo, senão o próximo som volta a nascer mudo.
 }
 
 export function FxProvider({ children }: { children: ReactNode }) {
@@ -133,7 +210,7 @@ export function FxProvider({ children }: { children: ReactNode }) {
   const [bursts, setBursts] = useState<Burst[]>([])
   const proximoId = useRef(0)
 
-  const setPref = useCallback((key: keyof FxPrefs, value: boolean) => {
+  const setPref = useCallback(<K extends keyof FxPrefs>(key: K, value: FxPrefs[K]) => {
     setPrefs((p) => {
       const novo = { ...p, [key]: value }
       try {
@@ -161,22 +238,43 @@ export function FxProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const speak = useCallback(
-    (text: string, forcar = false) => {
+    (text: string, perfil?: PerfilVoz, forcar = false) => {
       // `forcar` existe para a amostra em Configurações: quando o Joshua acaba
       // de ligar a voz, a preferência ainda não chegou aqui.
       if ((!prefs.voice && !forcar) || !('speechSynthesis' in window)) return
       window.speechSynthesis.cancel()
-      const fala = new SpeechSynthesisUtterance(text)
+
+      const fala = new SpeechSynthesisUtterance(paraFala(text))
       fala.lang = 'pt-BR'
-      fala.rate = 1.02
-      fala.pitch = 0.92
+      // O tom e a velocidade são o que diferencia um herói do outro: o
+      // aparelho costuma ter só duas vozes em português.
+      fala.pitch = perfil?.pitch ?? 0.95
+      fala.rate = perfil?.rate ?? 1.0
+
+      const disponiveis = vozesDisponiveis()
+      const escolhida = perfil?.genero === 'f' ? prefs.vozFeminina : prefs.vozMasculina
+      const voz =
+        disponiveis.find((v) => v.name === escolhida) ??
+        // sem escolha salva, tenta adivinhar pelo nome que o sistema usa
+        disponiveis.find((v) =>
+          perfil?.genero === 'f'
+            ? /maria|luciana|f[eê]mea|female|joana|ana/i.test(v.name)
+            : /daniel|male|ricardo|jo[aã]o|felipe/i.test(v.name),
+        ) ??
+        disponiveis[0]
+      if (voz) fala.voice = voz
+
       window.speechSynthesis.speak(fala)
     },
-    [prefs.voice],
+    [prefs.voice, prefs.vozMasculina, prefs.vozFeminina],
   )
 
   // Se o Joshua sair da página no meio de uma fala, ela não continua sozinha.
   useEffect(() => () => hush(), [hush])
+
+  // Deixa o áudio pronto no primeiro clique/toque, enquanto o navegador ainda
+  // aceita — depois disso ele bloqueia som que não veio de um gesto.
+  useEffect(() => liberarAudioNoPrimeiroToque(), [])
 
   const preview = useCallback((kind: BangKind) => tocar(kind), [])
 

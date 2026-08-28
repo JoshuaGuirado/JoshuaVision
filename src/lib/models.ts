@@ -38,21 +38,21 @@ export const AI_MODELS: AiModel[] = [
     hint: 'O mais rápido e barato',
   },
   {
-    id: 'gemini-2.5-pro',
+    id: 'gemini-3.1-pro-preview',
     label: 'Gemini Pro',
     provider: 'google',
-    hint: 'Modelo avançado do Google',
+    hint: 'O mais capaz do Google',
   },
   {
-    id: 'gemini-2.5-flash',
+    id: 'gemini-3.7-flash',
     label: 'Gemini Flash',
     provider: 'google',
-    hint: 'Versão rápida do Gemini',
+    hint: 'Rápido e gratuito',
   },
 ]
 
 /** Gemini Flash é o padrão por ser gratuito — trocar quando houver crédito na Anthropic. */
-export const DEFAULT_MODEL_ID = 'gemini-2.5-flash'
+export const DEFAULT_MODEL_ID = 'gemini-3.7-flash'
 
 export function findModel(id: string): AiModel | undefined {
   return AI_MODELS.find((m) => m.id === id)

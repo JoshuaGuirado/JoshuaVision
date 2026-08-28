@@ -23,6 +23,7 @@ import type {
   InvestmentEntry,
   Transaction,
 } from './types'
+import { useFx } from './fx'
 
 /**
  * O CÉREBRO DAS FINANÇAS.
@@ -126,9 +127,14 @@ export function FinancasProvider({ children }: { children: ReactNode }) {
     setCarregando(false)
   }, [])
 
+  // `versaoDados` muda quando algo grava por fora desta tela — o assistente
+  // criando um lançamento por voz, por exemplo. Sem isso o dinheiro entrava no
+  // banco mas a lista continuava dizendo que o mês estava vazio.
+  const { versaoDados } = useFx()
+
   useEffect(() => {
     recarregar()
-  }, [recarregar])
+  }, [recarregar, versaoDados])
 
   const doMes = useMemo(
     () => transacoes.filter((t) => ehDoMes(t.date, mes)),

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
-import { X, Send, ChevronDown, Maximize2, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
+import { X, Send, ChevronDown, Maximize2, Mic, MicOff } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AI_MODELS, DEFAULT_MODEL_ID, findModel } from '../lib/models'
 import { useChat } from '../lib/useChat'
@@ -7,6 +7,8 @@ import { useFx } from '../lib/fx'
 import { useEscuta, escutaDisponivel } from '../lib/useEscuta'
 import { extrairChamado, interpretar } from '../lib/comandosDeVoz'
 import HeroAvatar from './HeroAvatar'
+import TextoDoAssistente from './TextoDoAssistente'
+import BotaoVozFriday, { useVozDaFriday } from './BotaoVozFriday'
 import { useTemModalAberto } from './Modal'
 
 /**
@@ -26,7 +28,7 @@ export default function AssistantWidget() {
   const { messages, sending, error, send } = useChat()
   const bottomRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
-  const { prefs, setPref, speak, hush } = useFx()
+  const { setPref, speak, hush } = useFx()
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -88,6 +90,12 @@ export default function AssistantWidget() {
 
   const escuta = useEscuta(aoOuvir)
   pararEscuta.current = escuta.parar
+
+  const ultima = messages[messages.length - 1]
+  const voz = useVozDaFriday(
+    ultima?.role === 'assistant' ? ultima.content : '',
+    sending,
+  )
 
   const model = findModel(modelId)
 
@@ -158,23 +166,10 @@ export default function AssistantWidget() {
           )}
         </div>
 
-        {/* Mudo fica aqui, à mão: antes era preciso ir até Configurações só
-            para calar a F.R.I.D.A.Y. no meio de uma conversa. */}
-        <button
-          onClick={() => {
-            const ligando = !prefs.voice
-            setPref('voice', ligando)
-            if (ligando) speak('Voz ligada.', undefined, true)
-            else hush()
-          }}
-          className={`transition-colors p-1.5 -m-0.5 ${
-            prefs.voice ? 'text-accent' : 'text-text-faint hover:text-text'
-          }`}
-          aria-label={prefs.voice ? 'Silenciar a voz' : 'Ligar a voz'}
-          title={prefs.voice ? 'Silenciar' : 'Deixar falar'}
-        >
-          {prefs.voice ? <Volume2 size={16} /> : <VolumeX size={16} />}
-        </button>
+        {/* A voz DELA, aqui à mão: lê as respostas com a voz feminina da
+            F.R.I.D.A.Y., independente do herói da tela e sem passar por
+            Configurações. */}
+        <BotaoVozFriday ligada={voz.ligada} alternar={voz.alternar} />
 
         {escutaDisponivel() && (
           <button
@@ -246,7 +241,7 @@ export default function AssistantWidget() {
                   : 'bg-surface-2 border border-border-soft rounded-bl-sm'
               }`}
             >
-              {m.content || (sending ? '···' : '')}
+              {m.content ? <TextoDoAssistente texto={m.content} /> : sending ? '···' : ''}
             </div>
           </div>
         ))}

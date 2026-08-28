@@ -3,6 +3,8 @@ import { Send, ChevronDown } from 'lucide-react'
 import { AI_MODELS, DEFAULT_MODEL_ID, findModel } from '../../lib/models'
 import { useChat } from '../../lib/useChat'
 import HeroAvatar from '../../components/HeroAvatar'
+import TextoDoAssistente from '../../components/TextoDoAssistente'
+import BotaoVozFriday, { useVozDaFriday } from '../../components/BotaoVozFriday'
 
 export default function Assistant() {
   const [input, setInput] = useState('')
@@ -28,6 +30,9 @@ export default function Assistant() {
 
   const model = findModel(modelId)
 
+  const ultima = messages[messages.length - 1]
+  const voz = useVozDaFriday(ultima?.role === 'assistant' ? ultima.content : '', sending)
+
   return (
     // A altura desconta cabeçalho, respiros e o balão do herói acima da tela.
     <div className="flex flex-col h-[calc(100svh-19rem)] min-h-[20rem]">
@@ -39,7 +44,10 @@ export default function Assistant() {
           <p className="text-text-dim text-sm mt-1">Seu esquadrão de IA</p>
         </div>
 
-        <div className="relative shrink-0 self-start sm:self-auto">
+        <div className="relative shrink-0 self-start sm:self-auto flex items-center gap-2">
+          {/* A voz da própria F.R.I.D.A.Y., feminina, lendo as respostas. */}
+          <BotaoVozFriday ligada={voz.ligada} alternar={voz.alternar} />
+
           <button
             onClick={() => setPickerOpen((v) => !v)}
             className="flex items-center gap-2.5 border border-border rounded-xl pl-2 pr-3 py-1.5
@@ -110,7 +118,7 @@ export default function Assistant() {
                   : 'bg-surface border border-border-soft rounded-bl-sm'
               }`}
             >
-              {m.content || (sending ? '···' : '')}
+              {m.content ? <TextoDoAssistente texto={m.content} /> : sending ? '···' : ''}
             </div>
           </div>
         ))}

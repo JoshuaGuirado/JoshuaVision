@@ -7,6 +7,7 @@ import { useFinancas, CORES } from '../../lib/financas'
 import type { FinancialGoal } from '../../lib/types'
 import { formatMoney } from '../../lib/format'
 import { AvisoDoBanco } from './FinanceHome'
+import { useSalvar } from '../../lib/useSalvar'
 
 /**
  * METAS FINANCEIRAS — juntar dinheiro para alguma coisa.
@@ -162,21 +163,22 @@ function FormularioMeta({
   const [guardado, setGuardado] = useState(0)
   const [deadline, setDeadline] = useState('')
   const [color, setColor] = useState(CORES_META[0])
-  const [salvando, setSalvando] = useState(false)
+  const { salvando, erro, salvar: executar } = useSalvar()
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
     if (!title.trim() || alvo <= 0 || salvando) return
-    setSalvando(true)
-    await createFinancialGoal({
-      title: title.trim(),
-      target_amount: alvo,
-      saved_amount: guardado,
-      deadline: deadline || null,
-      color,
+    const ok = await executar(async () => {
+      await createFinancialGoal({
+        title: title.trim(),
+        target_amount: alvo,
+        saved_amount: guardado,
+        deadline: deadline || null,
+        color,
+      })
+      await onSaved()
     })
-    await onSaved()
-    onClose()
+    if (ok) onClose()
   }
 
   return (
@@ -218,6 +220,8 @@ function FormularioMeta({
           </div>
         </div>
 
+        {erro && <p className="text-danger text-sm">{erro}</p>}
+
         <SubmitButton disabled={salvando || !title.trim() || alvo <= 0}>
           {salvando ? 'Salvando...' : 'Criar meta'}
         </SubmitButton>
@@ -236,15 +240,16 @@ function FormularioGuardar({
   onSaved: () => Promise<void>
 }) {
   const [valor, setValor] = useState(0)
-  const [salvando, setSalvando] = useState(false)
+  const { salvando, erro, salvar: executar } = useSalvar()
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
     if (valor <= 0 || salvando) return
-    setSalvando(true)
-    await updateFinancialGoal(meta.id, { saved_amount: Number(meta.saved_amount) + valor })
-    await onSaved()
-    onClose()
+    const ok = await executar(async () => {
+      await updateFinancialGoal(meta.id, { saved_amount: Number(meta.saved_amount) + valor })
+      await onSaved()
+    })
+    if (ok) onClose()
   }
 
   return (
@@ -254,6 +259,8 @@ function FormularioGuardar({
           Já guardados: <span className="text-text">{formatMoney(Number(meta.saved_amount))}</span>
         </p>
         <MoneyField autoFocus label="Quanto você guardou agora" value={valor} onValue={setValor} />
+        {erro && <p className="text-danger text-sm">{erro}</p>}
+
         <SubmitButton disabled={salvando || valor <= 0}>
           {salvando ? 'Salvando...' : 'Adicionar'}
         </SubmitButton>

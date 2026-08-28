@@ -12,6 +12,7 @@ import { useFinancas, CORES } from '../../lib/financas'
 import type { Investment, InvestmentKind } from '../../lib/types'
 import { formatMoney } from '../../lib/format'
 import { AvisoDoBanco } from './FinanceHome'
+import { useSalvar } from '../../lib/useSalvar'
 
 /**
  * INVESTIMENTOS.
@@ -201,25 +202,26 @@ function FormularioInvestimento({
   const [name, setName] = useState('')
   const [kind, setKind] = useState<InvestmentKind>('renda_fixa')
   const [inicial, setInicial] = useState(0)
-  const [salvando, setSalvando] = useState(false)
+  const { salvando, erro, salvar: executar } = useSalvar()
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
     if (!name.trim() || salvando) return
-    setSalvando(true)
-    // O valor inicial vira ao mesmo tempo o primeiro aporte e o valor de hoje:
-    // acabou de aplicar, então ainda não rendeu nada.
-    const id = await createInvestment({ name: name.trim(), kind, current_value: inicial, notes: '' })
-    if (inicial > 0) {
-      const d = new Date()
-      await createInvestmentEntry({
-        investment_id: id,
-        amount: inicial,
-        date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`,
-      })
-    }
-    await onSaved()
-    onClose()
+    const ok = await executar(async () => {
+      // O valor inicial vira ao mesmo tempo o primeiro aporte e o valor de hoje:
+      // acabou de aplicar, então ainda não rendeu nada.
+      const id = await createInvestment({ name: name.trim(), kind, current_value: inicial, notes: '' })
+      if (inicial > 0) {
+        const d = new Date()
+        await createInvestmentEntry({
+          investment_id: id,
+          amount: inicial,
+          date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`,
+        })
+      }
+      await onSaved()
+    })
+    if (ok) onClose()
   }
 
   return (
@@ -240,6 +242,8 @@ function FormularioInvestimento({
           ))}
         </Select>
         <MoneyField label="Quanto você já tem aplicado nele" value={inicial} onValue={setInicial} />
+        {erro && <p className="text-danger text-sm">{erro}</p>}
+
         <SubmitButton disabled={salvando || !name.trim()}>
           {salvando ? 'Salvando...' : 'Criar'}
         </SubmitButton>
@@ -262,20 +266,21 @@ function FormularioAporte({
     const d = new Date()
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   })
-  const [salvando, setSalvando] = useState(false)
+  const { salvando, erro, salvar: executar } = useSalvar()
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
     if (amount <= 0 || salvando) return
-    setSalvando(true)
-    await createInvestmentEntry({ investment_id: investimento.id, amount, date })
-    // Quem acabou de colocar dinheiro tem esse dinheiro lá dentro: somar ao
-    // valor de hoje evita o rendimento aparecer negativo sem motivo.
-    await updateInvestment(investimento.id, {
-      current_value: Number(investimento.current_value) + amount,
+    const ok = await executar(async () => {
+      await createInvestmentEntry({ investment_id: investimento.id, amount, date })
+      // Quem acabou de colocar dinheiro tem esse dinheiro lá dentro: somar ao
+      // valor de hoje evita o rendimento aparecer negativo sem motivo.
+      await updateInvestment(investimento.id, {
+        current_value: Number(investimento.current_value) + amount,
+      })
+      await onSaved()
     })
-    await onSaved()
-    onClose()
+    if (ok) onClose()
   }
 
   return (
@@ -283,6 +288,8 @@ function FormularioAporte({
       <form onSubmit={salvar} className="space-y-4">
         <MoneyField autoFocus label="Quanto você colocou" value={amount} onValue={setAmount} />
         <Field label="Data" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        {erro && <p className="text-danger text-sm">{erro}</p>}
+
         <SubmitButton disabled={salvando || amount <= 0}>
           {salvando ? 'Salvando...' : 'Registrar aporte'}
         </SubmitButton>
@@ -301,15 +308,16 @@ function FormularioValor({
   onSaved: () => Promise<void>
 }) {
   const [valor, setValor] = useState(Number(investimento.current_value))
-  const [salvando, setSalvando] = useState(false)
+  const { salvando, erro, salvar: executar } = useSalvar()
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
     if (salvando) return
-    setSalvando(true)
-    await updateInvestment(investimento.id, { current_value: valor })
-    await onSaved()
-    onClose()
+    const ok = await executar(async () => {
+      await updateInvestment(investimento.id, { current_value: valor })
+      await onSaved()
+    })
+    if (ok) onClose()
   }
 
   return (
@@ -320,6 +328,8 @@ function FormularioValor({
           site calcula sozinho quanto rendeu.
         </p>
         <MoneyField autoFocus label="Valor hoje" value={valor} onValue={setValor} />
+        {erro && <p className="text-danger text-sm">{erro}</p>}
+
         <SubmitButton disabled={salvando}>{salvando ? 'Salvando...' : 'Atualizar'}</SubmitButton>
       </form>
     </Modal>

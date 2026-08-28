@@ -8,6 +8,7 @@ import { useFinancas, CORES } from '../../lib/financas'
 import type { AccountKind } from '../../lib/types'
 import { formatMoney } from '../../lib/format'
 import { AvisoDoBanco } from './FinanceHome'
+import { useSalvar } from '../../lib/useSalvar'
 
 /**
  * CONTAS — onde o dinheiro está.
@@ -130,15 +131,16 @@ function FormularioConta({
   const [kind, setKind] = useState<AccountKind>('corrente')
   const [color, setColor] = useState(CORES_CONTA[0])
   const [inicial, setInicial] = useState(0)
-  const [salvando, setSalvando] = useState(false)
+  const { salvando, erro, salvar: executar } = useSalvar()
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
     if (!name.trim() || salvando) return
-    setSalvando(true)
-    await createAccount({ name: name.trim(), kind, color, initial_balance: inicial })
-    await onSaved()
-    onClose()
+    const ok = await executar(async () => {
+      await createAccount({ name: name.trim(), kind, color, initial_balance: inicial })
+      await onSaved()
+    })
+    if (ok) onClose()
   }
 
   return (
@@ -185,6 +187,8 @@ function FormularioConta({
             ))}
           </div>
         </div>
+
+        {erro && <p className="text-danger text-sm">{erro}</p>}
 
         <SubmitButton disabled={salvando || !name.trim()}>
           {salvando ? 'Salvando...' : 'Criar conta'}

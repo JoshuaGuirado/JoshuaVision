@@ -105,7 +105,7 @@ export default function FinanceAccounts() {
                   await deleteAccount(c.id)
                   await recarregar()
                 }}
-                className="text-text-faint hover:text-danger transition-colors p-1 shrink-0"
+                className="text-text-faint hover:text-danger transition-colors -m-1 p-2 shrink-0"
                 aria-label="Excluir"
               >
                 <Trash2 size={15} />

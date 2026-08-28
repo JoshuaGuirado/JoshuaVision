@@ -62,7 +62,7 @@ export default function Notes() {
                 remove(n.id)
               }}
               className="absolute top-3 right-3 text-text-faint hover:text-danger transition-colors
-                         p-1 opacity-0 group-hover:opacity-100"
+                         p-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
               aria-label="Excluir"
             >
               <Trash2 size={15} />

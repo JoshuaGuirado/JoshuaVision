@@ -71,7 +71,7 @@ export default function Projects() {
               <p className="font-semibold text-sm flex-1 min-w-0 truncate">{p.name}</p>
               <button
                 onClick={() => remove(p.id)}
-                className="text-text-faint hover:text-danger transition-colors p-0.5 opacity-0 group-hover:opacity-100 shrink-0"
+                className="text-text-faint hover:text-danger transition-colors -m-1 p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 shrink-0"
                 aria-label="Excluir"
               >
                 <Trash2 size={15} />

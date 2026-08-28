@@ -193,7 +193,13 @@ function SummaryList({
           <Icon size={15} strokeWidth={1.75} />
         </span>
         <p className="text-sm font-semibold flex-1">{title}</p>
-        <Link to={to} className="text-text-faint hover:text-text transition-colors">
+        {/* O padding dá área de toque ao ícone, que sozinho tinha 17px — pequeno
+            demais para acertar com o dedo. O margin negativo mantém o alinhamento. */}
+        <Link
+          to={to}
+          aria-label={`Abrir ${title}`}
+          className="text-text-faint hover:text-text transition-colors -m-2 p-2"
+        >
           <ChevronRight size={17} />
         </Link>
       </div>

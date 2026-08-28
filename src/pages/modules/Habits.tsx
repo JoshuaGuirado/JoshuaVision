@@ -193,7 +193,7 @@ export default function Habits() {
 
             <button
               onClick={() => remove(h.id)}
-              className="text-text-faint hover:text-danger transition-colors p-1 opacity-0 group-hover:opacity-100 shrink-0"
+              className="text-text-faint hover:text-danger transition-colors -m-1 p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 shrink-0"
               aria-label="Excluir"
             >
               <Trash2 size={15} />

@@ -245,7 +245,7 @@ function Linha({
 
       <button
         onClick={aoExcluir}
-        className="text-text-faint hover:text-danger transition-colors p-1 shrink-0
+        className="text-text-faint hover:text-danger transition-colors -m-1 p-2 shrink-0
                    opacity-60 sm:opacity-0 sm:group-hover:opacity-100"
         aria-label="Excluir"
       >

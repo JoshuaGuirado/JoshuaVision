@@ -122,7 +122,7 @@ function EventRow({
 
       <button
         onClick={() => onDelete(event.id)}
-        className="text-text-faint hover:text-danger transition-colors p-1 opacity-0 group-hover:opacity-100"
+        className="text-text-faint hover:text-danger transition-colors -m-1 p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
         aria-label="Excluir"
       >
         <Trash2 size={15} />

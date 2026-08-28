@@ -1,0 +1,26 @@
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      manifest: {
+        name: 'TJV — TheJoshuaVision',
+        short_name: 'TJV',
+        description: 'Sistema pessoal de gestão financeira e de vida',
+        theme_color: '#0a0a0a',
+        background_color: '#0a0a0a',
+        display: 'standalone',
+        start_url: '/',
+        icons: [
+          { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+        ],
+      },
+    }),
+  ],
+})

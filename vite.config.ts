@@ -11,6 +11,18 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      // `injectManifest` em vez do service worker automático: precisamos do
+      // nosso próprio (src/sw.ts) para receber as notificações push.
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      injectManifest: {
+        // as artes dos heróis e as vozes são grandes e não precisam ficar
+        // guardadas offline; o resto do site sim
+        globPatterns: ['**/*.{js,css,html,svg}'],
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+      },
+      devOptions: { enabled: false, type: 'module' },
       manifest: {
         name: 'THE JOSHUA VISION',
         short_name: 'TJV',

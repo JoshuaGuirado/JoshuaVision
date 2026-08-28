@@ -6,6 +6,7 @@ import { APP_EMAIL } from '../lib/supabase'
 import { useFx, vozesDisponiveis } from '../lib/fx'
 import { useHeroColor } from '../lib/nav'
 import { HERO_VOICES } from '../lib/heroVoice'
+import Notificacoes from '../components/Notificacoes'
 
 /** Interruptor liga/desliga no estilo do site. */
 function Switch({
@@ -143,6 +144,8 @@ export default function Settings() {
             para nada e só ocupa a tela. */}
         {prefs.voice && <EscolhaDeVozes cor={cor} />}
       </Card>
+
+      <Notificacoes cor={cor} />
 
       <p className="text-text-faint text-xs mt-4">
         As preferências ficam guardadas neste aparelho. Mais opções (tema, senha, notificações)

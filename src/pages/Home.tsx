@@ -23,31 +23,29 @@ export default function Home() {
   return (
     <div className="min-h-svh px-5 py-8 sm:px-8 sm:py-12">
       <div className="max-w-5xl mx-auto">
-        <header className="flex items-start justify-between mb-12 sm:mb-16">
-          <div className="flex items-center gap-4">
-            <LogoMark size={46} />
-            <div>
-              <p className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.22em] leading-tight">
-                THE JOSHUA
-                <br />
-                <span className="text-accent">VISION</span>
-              </p>
-            </div>
+        <header className="tjv-fade flex items-center justify-between mb-12 sm:mb-16">
+          <div className="flex items-center gap-3.5">
+            <LogoMark size={44} />
+            <p className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.22em] leading-tight">
+              THE JOSHUA
+              <br />
+              <span className="text-accent">VISION</span>
+            </p>
           </div>
 
           <button
             onClick={signOut}
-            className="text-text-faint hover:text-text-dim transition-colors p-2 -mr-2"
+            className="text-text-faint hover:text-accent transition-colors p-2 -mr-2"
             aria-label="Sair"
           >
             <LogOut size={18} />
           </button>
         </header>
 
-        <div className="mb-10 sm:mb-12">
-          <h1 className="text-3xl sm:text-[2.6rem] font-bold leading-tight tracking-tight">
+        <div className="tjv-fade mb-10 sm:mb-12" style={{ animationDelay: '80ms' }}>
+          <h1 className="text-3xl sm:text-[2.7rem] font-bold leading-tight tracking-tight">
             {greeting()},{' '}
-            <span className="bg-gradient-to-r from-accent-light to-accent bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-accent-light via-accent to-cap bg-clip-text text-transparent">
               Joshua
             </span>
             .
@@ -60,30 +58,36 @@ export default function Home() {
             <Link
               key={path}
               to={path}
-              style={{ animationDelay: `${i * 45}ms` }}
+              style={{ animationDelay: `${120 + i * 45}ms` }}
               className="tjv-rise group relative overflow-hidden rounded-2xl p-5 sm:p-6
                          border border-border-soft bg-surface
                          hover:border-border transition-all duration-300
-                         hover:-translate-y-1 min-h-[7.5rem] sm:min-h-[9rem]
+                         hover:-translate-y-1 aspect-[4/3] sm:aspect-square lg:aspect-[4/3]
                          flex flex-col justify-between"
             >
-              {/* halo colorido do módulo — sutil em repouso, acende no hover */}
+              {/* halo do módulo — discreto em repouso, acende no hover */}
               <span
                 aria-hidden
-                className="absolute inset-0 opacity-[0.07] group-hover:opacity-[0.16] transition-opacity duration-300"
+                className="absolute inset-0 opacity-[0.09] group-hover:opacity-[0.22] transition-opacity duration-300"
                 style={{
                   background: `radial-gradient(18rem 12rem at 100% 0%, ${color}, transparent 70%)`,
                 }}
+              />
+              {/* linha superior que desliza no hover, como a listra do escudo */}
+              <span
+                aria-hidden
+                className="absolute top-0 left-0 h-[2px] w-0 group-hover:w-full transition-all duration-500"
+                style={{ backgroundColor: color }}
               />
 
               <div className="relative">
                 <span
                   className="inline-flex w-10 h-10 sm:w-11 sm:h-11 rounded-xl items-center justify-center
-                             transition-transform duration-300 group-hover:scale-105"
+                             transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6"
                   style={{
-                    backgroundColor: `${color}1a`,
+                    backgroundColor: `${color}1f`,
                     color,
-                    boxShadow: `inset 0 0 0 1px ${color}26`,
+                    boxShadow: `inset 0 0 0 1px ${color}33`,
                   }}
                 >
                   <Icon size={20} strokeWidth={1.75} />

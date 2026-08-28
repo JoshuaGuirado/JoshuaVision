@@ -5,6 +5,8 @@ import Login from './pages/Login'
 import SetupNeeded from './pages/SetupNeeded'
 import Home from './pages/Home'
 import Settings from './pages/Settings'
+import AssistantWidget from './components/AssistantWidget'
+import Today from './pages/modules/Today'
 import Agenda from './pages/modules/Agenda'
 import Tasks from './pages/modules/Tasks'
 import Goals from './pages/modules/Goals'
@@ -33,32 +35,38 @@ function AppRoutes() {
   if (!session) return <Login />
 
   return (
-    <Routes>
-      {/* A Home fica fora do Layout: lá não há navegação lateral, só os módulos. */}
-      <Route path="/" element={<Home />} />
+    <>
+      <Routes>
+        {/* A Home fica fora do Layout: lá não há navegação lateral, só os módulos. */}
+        <Route path="/" element={<Home />} />
 
-      <Route element={<Layout />}>
-        <Route path="/agenda" element={<Agenda />} />
-        <Route path="/tarefas" element={<Tasks />} />
-        <Route path="/metas" element={<Goals />} />
-        <Route path="/habitos" element={<Habits />} />
-        <Route path="/projetos" element={<Projects />} />
-        <Route path="/estudos" element={<Studies />} />
-        <Route path="/saude" element={<Health />} />
-        <Route path="/notas" element={<Notes />} />
-        <Route path="/assistente" element={<Assistant />} />
-        <Route path="/configuracoes" element={<Settings />} />
+        <Route element={<Layout />}>
+          <Route path="/hoje" element={<Today />} />
+          <Route path="/agenda" element={<Agenda />} />
+          <Route path="/tarefas" element={<Tasks />} />
+          <Route path="/metas" element={<Goals />} />
+          <Route path="/habitos" element={<Habits />} />
+          <Route path="/projetos" element={<Projects />} />
+          <Route path="/estudos" element={<Studies />} />
+          <Route path="/saude" element={<Health />} />
+          <Route path="/notas" element={<Notes />} />
+          <Route path="/assistente" element={<Assistant />} />
+          <Route path="/configuracoes" element={<Settings />} />
 
-        <Route path="/financas" element={<FinanceLayout />}>
-          <Route index element={<FinanceHome />} />
-          <Route path="lancamentos" element={<FinanceTransactions />} />
-          <Route path="categorias" element={<FinanceCategories />} />
-          <Route path="orcamento" element={<FinanceBudget />} />
+          <Route path="/financas" element={<FinanceLayout />}>
+            <Route index element={<FinanceHome />} />
+            <Route path="lancamentos" element={<FinanceTransactions />} />
+            <Route path="categorias" element={<FinanceCategories />} />
+            <Route path="orcamento" element={<FinanceBudget />} />
+          </Route>
         </Route>
-      </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+
+      {/* Bolha de suporte — acompanha o Joshua em todas as telas. */}
+      <AssistantWidget />
+    </>
   )
 }
 

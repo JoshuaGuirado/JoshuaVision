@@ -1,35 +1,30 @@
 /**
- * Identidade do THE JOSHUA VISION.
+ * Identidade do THE JOSHUA VISION — tema Capitão América.
  *
- * O monograma é um TJV entrelaçado dentro de um anel partido: metade prata
- * (T e J), metade dourada (V). Recriado em SVG para escalar sem perder
- * qualidade e permitir variações sem exportar arquivos novos.
+ * O símbolo é o escudo: anéis vermelho/branco concêntricos, campo azul e a
+ * estrela de cinco pontas no centro. Feito em SVG para escalar sem perder
+ * nitidez e permitir variações sem exportar imagem nova.
  */
 
-const SILVER_ID = 'tjv-silver'
-const GOLD_ID = 'tjv-gold'
-
-function Defs() {
-  return (
-    <defs>
-      <linearGradient id={SILVER_ID} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#ffffff" />
-        <stop offset="45%" stopColor="#d9d9d9" />
-        <stop offset="55%" stopColor="#8f8f8f" />
-        <stop offset="100%" stopColor="#e6e6e6" />
-      </linearGradient>
-      <linearGradient id={GOLD_ID} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#f7dfa0" />
-        <stop offset="45%" stopColor="#d4a53c" />
-        <stop offset="55%" stopColor="#a97c1d" />
-        <stop offset="100%" stopColor="#e9c877" />
-      </linearGradient>
-    </defs>
-  )
+/** Estrela de 5 pontas centrada em (cx, cy) com raio externo r. */
+function starPoints(cx: number, cy: number, r: number) {
+  const inner = r * 0.382 // proporção clássica da estrela de 5 pontas
+  return Array.from({ length: 10 }, (_, i) => {
+    const radius = i % 2 === 0 ? r : inner
+    const angle = (Math.PI / 5) * i - Math.PI / 2
+    return `${cx + radius * Math.cos(angle)},${cy + radius * Math.sin(angle)}`
+  }).join(' ')
 }
 
-/** Monograma TJV dentro do anel — usado em favicon, sidebar e espaços pequenos. */
-export function LogoMark({ size = 48, className }: { size?: number; className?: string }) {
+export function LogoMark({
+  size = 48,
+  className,
+  animated = false,
+}: {
+  size?: number
+  className?: string
+  animated?: boolean
+}) {
   return (
     <svg
       width={size}
@@ -39,82 +34,63 @@ export function LogoMark({ size = 48, className }: { size?: number; className?: 
       role="img"
       aria-label="THE JOSHUA VISION"
     >
-      <Defs />
+      <defs>
+        <radialGradient id="tjv-shine" cx="32%" cy="26%" r="78%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
+          <stop offset="55%" stopColor="#ffffff" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.22" />
+        </radialGradient>
+      </defs>
 
-      {/* anel partido: metade esquerda prata, metade direita dourada */}
-      <path
-        d="M100 18 A82 82 0 0 0 100 182"
-        fill="none"
-        stroke={`url(#${SILVER_ID})`}
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M100 18 A82 82 0 0 1 100 182"
-        fill="none"
-        stroke={`url(#${GOLD_ID})`}
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
+      {/* anéis do escudo, de fora para dentro */}
+      <circle cx="100" cy="100" r="96" fill="#c8102e" />
+      <circle cx="100" cy="100" r="76" fill="#f2f5fb" />
+      <circle cx="100" cy="100" r="57" fill="#c8102e" />
+      <circle cx="100" cy="100" r="38" fill="#1b4fb5" />
 
-      {/* V dourado, atrás */}
-      <path
-        d="M108 58 L132 148 L156 58"
-        fill="none"
-        stroke={`url(#${GOLD_ID})`}
-        strokeWidth="17"
-        strokeLinejoin="miter"
-        strokeLinecap="butt"
-      />
+      <polygon points={starPoints(100, 100, 30)} fill="#f2f5fb" />
 
-      {/* T prata */}
-      <path
-        d="M46 58 H128 M87 58 V132"
-        fill="none"
-        stroke={`url(#${SILVER_ID})`}
-        strokeWidth="14"
-        strokeLinecap="butt"
+      {/* brilho metálico por cima */}
+      <circle
+        cx="100"
+        cy="100"
+        r="96"
+        fill="url(#tjv-shine)"
+        className={animated ? 'tjv-spin-slow' : undefined}
+        style={{ transformOrigin: '100px 100px' }}
       />
-
-      {/* J prata — desce do T e curva à esquerda */}
-      <path
-        d="M87 108 V128 A22 22 0 0 1 65 150 A22 22 0 0 1 47 140"
-        fill="none"
-        stroke={`url(#${SILVER_ID})`}
-        strokeWidth="14"
-        strokeLinecap="butt"
-      />
+      <circle cx="100" cy="100" r="95" fill="none" stroke="#00000055" strokeWidth="2" />
     </svg>
   )
 }
 
-/** "THE JOSHUA VISION" em letreiro espaçado — para cabeçalhos e a sidebar. */
+/** "THE JOSHUA VISION" em letreiro espaçado. */
 export function LogoWordmark({ className }: { className?: string }) {
   return (
-    <span className={`font-extrabold tracking-[0.28em] whitespace-nowrap ${className ?? ''}`}>
+    <span className={`font-extrabold tracking-[0.26em] whitespace-nowrap ${className ?? ''}`}>
       <span className="text-text">THE JOSHUA </span>
       <span className="text-accent">VISION</span>
     </span>
   )
 }
 
-/** Versão completa: monograma + letreiro + assinatura. Usada na tela de acesso. */
-export function LogoFull({ markSize = 132 }: { markSize?: number }) {
+/** Versão completa usada na tela de acesso. */
+export function LogoFull({ markSize = 128 }: { markSize?: number }) {
   return (
     <div className="flex flex-col items-center">
-      <LogoMark size={markSize} />
+      <LogoMark size={markSize} animated />
 
-      <p className="mt-6 text-[15px] sm:text-lg font-extrabold tracking-[0.3em] whitespace-nowrap">
+      <p className="mt-7 text-[15px] sm:text-lg font-extrabold tracking-[0.28em] whitespace-nowrap">
         <span className="text-text">THE JOSHUA </span>
         <span className="text-accent">VISION</span>
       </p>
 
-      <div className="mt-3 flex items-center gap-3 w-full max-w-[260px]">
-        <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/50" />
+      <div className="mt-3 flex items-center gap-3 w-full max-w-[268px]">
+        <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/60" />
         <span className="text-[9px] sm:text-[10px] tracking-[0.22em] text-text-dim whitespace-nowrap">
           YOUR LIFE. YOUR VISION.
         </span>
-        <span className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/50" />
+        <span className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/60" />
       </div>
     </div>
   )

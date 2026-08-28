@@ -2,56 +2,73 @@ export type Provider = 'anthropic' | 'google'
 
 export type AiModel = {
   id: string
+  /** Codinome do esquadrão — a patente reflete o nível de inteligência. */
   label: string
+  /** Nome real do modelo, mostrado em letra miúda. */
+  realName: string
   provider: Provider
-  /** Texto curto que ajuda a escolher o modelo na interface. */
   hint: string
+  color: string
+  /** 1 = mais poderoso. Ordena a lista de escolha. */
+  rank: number
 }
 
 /**
- * Os modelos da Anthropic exigem créditos comprados no console deles; o Gemini
- * tem camada gratuita. Enquanto não houver crédito, a interface deixa isso
- * explícito em vez de deixar o Joshua descobrir por um erro no meio da conversa.
+ * O esquadrão do Joshua. Quanto mais forte o personagem, mais capaz o modelo:
+ * o Capitão lidera, o Falcão vem logo atrás, e assim por diante.
  */
-export const PROVIDER_LABEL: Record<Provider, string> = {
-  anthropic: 'Claude',
-  google: 'Gemini',
-}
-
-export const AI_MODELS: AiModel[] = [
+const SQUAD: AiModel[] = [
   {
     id: 'claude-opus-5',
-    label: 'Opus',
+    label: 'Capitão América',
+    realName: 'Claude Opus',
     provider: 'anthropic',
-    hint: 'O mais inteligente — para raciocínio pesado',
+    hint: 'O líder — raciocínio mais profundo',
+    color: '#e0263c',
+    rank: 1,
   },
   {
     id: 'claude-sonnet-5',
-    label: 'Sonnet',
+    label: 'Falcão',
+    realName: 'Claude Sonnet',
     provider: 'anthropic',
-    hint: 'Equilíbrio entre qualidade e velocidade',
-  },
-  {
-    id: 'claude-haiku-4-5',
-    label: 'Haiku',
-    provider: 'anthropic',
-    hint: 'O mais rápido e barato',
+    hint: 'Ágil e completo — o braço direito',
+    color: '#2f6df0',
+    rank: 2,
   },
   {
     id: 'gemini-3.1-pro-preview',
-    label: 'Gemini Pro',
+    label: 'Viúva Negra',
+    realName: 'Gemini Pro',
     provider: 'google',
-    hint: 'O mais capaz do Google',
+    hint: 'Estrategista — gratuito e capaz',
+    color: '#a8bbdd',
+    rank: 3,
+  },
+  {
+    id: 'claude-haiku-4-5',
+    label: 'Soldado Invernal',
+    realName: 'Claude Haiku',
+    provider: 'anthropic',
+    hint: 'Rápido e direto ao ponto',
+    color: '#7f93bb',
+    rank: 4,
   },
   {
     id: 'gemini-3.7-flash',
-    label: 'Gemini Flash',
+    label: 'Agente 13',
+    realName: 'Gemini Flash',
     provider: 'google',
-    hint: 'Rápido e gratuito',
+    hint: 'O mais veloz — gratuito',
+    color: '#5b93ff',
+    rank: 5,
   },
 ]
 
-/** Gemini Flash é o padrão por ser gratuito — trocar quando houver crédito na Anthropic. */
+/** Ordenado por patente: o mais poderoso encabeça a lista. */
+export const AI_MODELS: AiModel[] = [...SQUAD].sort((a, b) => a.rank - b.rank)
+
+/** Agente 13 é o padrão por ser gratuito — trocar quando houver crédito na Anthropic. */
 export const DEFAULT_MODEL_ID = 'gemini-3.7-flash'
 
 export function findModel(id: string): AiModel | undefined {

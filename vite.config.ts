@@ -13,8 +13,8 @@ export default defineConfig({
         name: 'THE JOSHUA VISION',
         short_name: 'TJV',
         description: 'Life OS pessoal — sua vida, sua visão',
-        theme_color: '#0a0a0a',
-        background_color: '#0a0a0a',
+        theme_color: '#060d1c',
+        background_color: '#060d1c',
         display: 'standalone',
         start_url: '/',
         icons: [

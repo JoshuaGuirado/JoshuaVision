@@ -1,5 +1,5 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { Trash2, Repeat, Check } from 'lucide-react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { Trash2, Repeat, Check, Flame } from 'lucide-react'
 import Modal from '../../components/Modal'
 import {
   PageHeader,
@@ -26,6 +26,50 @@ function lastSevenDays() {
   })
 }
 
+function diaISO(recuo: number) {
+  const d = new Date()
+  d.setDate(d.getDate() - recuo)
+  return d.toISOString().slice(0, 10)
+}
+
+/**
+ * Dias seguidos até hoje.
+ *
+ * O dia de hoje ainda não acabou: se ele já marcou, a conta começa em hoje;
+ * se ainda não marcou, começa em ontem — assim a sequência não parece perdida
+ * de manhã, antes de ele ter tido chance de fazer.
+ */
+export function calcularSequencia(datasFeitas: Set<string>, maxDias = 400): number {
+  const inicio = datasFeitas.has(diaISO(0)) ? 0 : 1
+  // Sem marcação hoje nem ontem, a corrente já foi quebrada.
+  if (inicio === 1 && !datasFeitas.has(diaISO(1))) return 0
+
+  let total = 0
+  for (let i = inicio; i < maxDias; i++) {
+    if (!datasFeitas.has(diaISO(i))) break
+    total++
+  }
+  return total
+}
+
+/**
+ * A corrente do hábito. Só aparece a partir de dois dias: "1 dia seguido" não
+ * é uma sequência, é só ter feito hoje.
+ */
+function Sequencia({ dias, cor }: { dias: number; cor: string }) {
+  if (dias < 2) return null
+
+  return (
+    <span
+      className="inline-flex items-center gap-1 text-[11px] font-semibold mt-0.5"
+      style={{ color: cor }}
+    >
+      <Flame size={11} strokeWidth={2.5} />
+      {dias} dias seguidos
+    </span>
+  )
+}
+
 export default function Habits() {
   const { items, loading, error, create, remove } = useCollection<Habit>('habits', {
     column: 'created_at',
@@ -37,7 +81,9 @@ export default function Habits() {
   const days = lastSevenDays()
 
   async function loadLogs() {
-    const { data } = await supabase.from('habit_logs').select('*').gte('date', days[0])
+    // A grade mostra 7 dias, mas a sequência precisa de histórico: sem isso
+    // qualquer corrente pareceria ter no máximo uma semana.
+    const { data } = await supabase.from('habit_logs').select('*').gte('date', diaISO(400))
     setLogs((data ?? []) as HabitLog[])
   }
 
@@ -66,11 +112,29 @@ export default function Habits() {
   const today = days[6]
   const doneToday = items.filter((h) => isDone(h.id, today)).length
 
+  // Uma sequência por hábito, calculada de uma vez a cada mudança nos registros.
+  const sequencias = useMemo(() => {
+    const porHabito = new Map<string, Set<string>>()
+    for (const l of logs) {
+      let set = porHabito.get(l.habit_id)
+      if (!set) porHabito.set(l.habit_id, (set = new Set()))
+      set.add(l.date)
+    }
+    return new Map(items.map((h) => [h.id, calcularSequencia(porHabito.get(h.id) ?? new Set())]))
+  }, [logs, items])
+
+  const melhorSequencia = Math.max(0, ...sequencias.values())
+
   return (
     <div>
       <PageHeader
         title="Hábitos"
-        subtitle={items.length > 0 ? `${doneToday}/${items.length} hoje` : undefined}
+        subtitle={
+          items.length > 0
+            ? `${doneToday}/${items.length} hoje` +
+              (melhorSequencia >= 2 ? ` · melhor corrente: ${melhorSequencia} dias` : '')
+            : undefined
+        }
         action={<AddButton onClick={() => setShowForm(true)} />}
       />
 
@@ -101,7 +165,10 @@ export default function Habits() {
               className="w-2 h-2 rounded-full shrink-0"
               style={{ backgroundColor: h.color }}
             />
-            <p className="text-sm font-medium flex-1 min-w-0 truncate">{h.name}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{h.name}</p>
+              <Sequencia dias={sequencias.get(h.id) ?? 0} cor={h.color} />
+            </div>
 
             <div className="flex gap-1.5 shrink-0">
               {days.map((d) => {

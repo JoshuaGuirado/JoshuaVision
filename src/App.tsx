@@ -22,6 +22,10 @@ import FinanceHome from './pages/finance/FinanceHome'
 import FinanceTransactions from './pages/finance/FinanceTransactions'
 import FinanceCategories from './pages/finance/FinanceCategories'
 import FinanceBudget from './pages/finance/FinanceBudget'
+import FinanceInvestments from './pages/finance/FinanceInvestments'
+import FinanceAccounts from './pages/finance/FinanceAccounts'
+import FinanceGoals from './pages/finance/FinanceGoals'
+import FinanceMore from './pages/finance/FinanceMore'
 import { isSupabaseConfigured } from './lib/supabase'
 
 function AppRoutes() {
@@ -59,6 +63,10 @@ function AppRoutes() {
             <Route path="lancamentos" element={<FinanceTransactions />} />
             <Route path="categorias" element={<FinanceCategories />} />
             <Route path="orcamento" element={<FinanceBudget />} />
+            <Route path="investimentos" element={<FinanceInvestments />} />
+            <Route path="contas" element={<FinanceAccounts />} />
+            <Route path="metas" element={<FinanceGoals />} />
+            <Route path="mais" element={<FinanceMore />} />
           </Route>
         </Route>
 

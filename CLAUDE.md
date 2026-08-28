@@ -32,8 +32,12 @@ interface. Ver `src/index.css` (paleta + keyframes) e `src/components/Logo.tsx`.
 Hoje (resumo), Agenda, Finanças, Tarefas, Metas, Hábitos, Projetos, Estudos,
 Saúde, Notas, Assistente, Configurações.
 
-Finanças tem sub-navegação própria em `src/pages/finance/`; os demais são páginas
-únicas em `src/pages/modules/`.
+Finanças tem sub-navegação própria em `src/pages/finance/`: quatro abas
+(Resumo, Lançamentos, Investir, Mais) — quatro de propósito, porque cinco já
+ficam apertadas no celular; Contas, Metas, Categorias e Orçamento moram dentro
+de "Mais". Todas as telas leem de `src/lib/financas.tsx`, que guarda o mês
+selecionado e faz as contas num lugar só. Os demais módulos são páginas únicas
+em `src/pages/modules/`.
 
 O usuário **removeu Visão e Diário** de propósito — não recrie.
 
@@ -57,7 +61,8 @@ Supabase URL e anon key ficam em `.env.local` (ignorado pelo git) e nas
 Environment Variables da Vercel. Login pede só senha; o e-mail fixo está em
 `APP_EMAIL` (`src/lib/supabase.ts`).
 
-Schemas: `supabase/schema.sql` (finanças) e `supabase/schema-modules.sql`
+Schemas: `supabase/schema.sql` (finanças), `supabase/schema-financas-v2.sql`
+(contas, investimentos e metas financeiras) e `supabase/schema-modules.sql`
 (demais). Rodar no SQL Editor do Supabase quando criar tabela nova.
 
 ## Preferência de commits (confirmada em 2026-08-28)

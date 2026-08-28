@@ -1,3 +1,4 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import webpush from 'web-push'
 
 /**
@@ -14,14 +15,6 @@ import webpush from 'web-push'
  * Precisa de SUPABASE_SERVICE_ROLE_KEY: sem um usuário logado, é a única
  * chave que enxerga as tabelas.
  */
-export const config = { runtime: 'nodejs' }
-
-function json(body: unknown, status: number) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json' },
-  })
-}
 
 /** Data de hoje em Brasília, no formato do banco. */
 function hojeEmBrasilia() {
@@ -32,14 +25,14 @@ function hojeEmBrasilia() {
   return `${brasilia.getFullYear()}-${mes}-${dia}`
 }
 
-export default async function handler(request: Request) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // A Vercel manda este cabeçalho nas chamadas agendadas. O segredo cobre o
   // caso de alguém descobrir o endereço e tentar disparar avisos à toa.
   const segredo = process.env.CRON_SECRET
   const autorizado =
-    request.headers.get('user-agent')?.includes('vercel-cron') ||
-    (segredo && request.headers.get('authorization') === `Bearer ${segredo}`)
-  if (!autorizado) return json({ error: 'Não autorizado.' }, 401)
+    (req.headers['user-agent'] ?? '').includes('vercel-cron') ||
+    (segredo && req.headers.authorization === `Bearer ${segredo}`)
+  if (!autorizado) return res.status(401).json({ error: 'Não autorizado.' })
 
   const url = process.env.VITE_SUPABASE_URL
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -47,7 +40,7 @@ export default async function handler(request: Request) {
   const privada = process.env.VAPID_PRIVATE_KEY
 
   if (!url || !service || !publica || !privada) {
-    return json({ error: 'Faltam variáveis de ambiente no servidor.' }, 500)
+    return res.status(500).json({ error: 'Faltam variáveis de ambiente no servidor.' })
   }
 
   const cabecalhos = { apikey: service, authorization: `Bearer ${service}` }
@@ -68,7 +61,9 @@ export default async function handler(request: Request) {
     ),
   ])
 
-  if (inscricoes.length === 0) return json({ ok: true, aviso: 'Nenhum aparelho cadastrado.' }, 200)
+  if (inscricoes.length === 0) {
+    return res.status(200).json({ ok: true, aviso: 'Nenhum aparelho cadastrado.' })
+  }
 
   // ---- monta a frase, na voz dos Vingadores ----
   const partes: string[] = []
@@ -121,5 +116,5 @@ export default async function handler(request: Request) {
     })
   }
 
-  return json({ ok: true, entregues, removidos: mortos.length, corpo }, 200)
+  return res.status(200).json({ ok: true, entregues, removidos: mortos.length, corpo })
 }

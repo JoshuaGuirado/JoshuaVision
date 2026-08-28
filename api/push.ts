@@ -1,3 +1,4 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import webpush from 'web-push'
 
 /**
@@ -7,9 +8,11 @@ import webpush from 'web-push'
  * prova para a Apple e para o Google que a mensagem é mesmo do nosso site)
  * não pode aparecer no navegador.
  *
- * Runtime Node, não edge: a biblioteca `web-push` usa criptografia do Node.
+ * Usa a assinatura `(req, res)` do Node, e não o formato `Request`/`Response`
+ * de `api/chat.ts`: aquele é do runtime edge, e a biblioteca `web-push`
+ * precisa da criptografia do Node. Com o formato errado a função nem chegava a
+ * rodar — respondia FUNCTION_INVOCATION_FAILED.
  */
-export const config = { runtime: 'nodejs' }
 
 type Inscricao = {
   id: string
@@ -18,21 +21,11 @@ type Inscricao = {
   auth: string
 }
 
-function json(body: unknown, status: number) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
 /** Confirma que quem chamou é o usuário logado e devolve o id dele. */
-async function usuarioDoToken(request: Request): Promise<string | null> {
-  const token = request.headers.get('authorization')?.replace(/^Bearer /, '')
-  if (!token) return null
-
+async function usuarioDoToken(token: string): Promise<string | null> {
   const url = process.env.VITE_SUPABASE_URL
   const anonKey = process.env.VITE_SUPABASE_ANON_KEY
-  if (!url || !anonKey) return null
+  if (!token || !url || !anonKey) return null
 
   const res = await fetch(`${url}/auth/v1/user`, {
     headers: { apikey: anonKey, authorization: `Bearer ${token}` },
@@ -49,7 +42,7 @@ async function usuarioDoToken(request: Request): Promise<string | null> {
  * permissão revogada: eles são apagados, senão a lista só cresce com endereços
  * mortos.
  */
-export async function enviarParaUsuario(
+async function enviarParaUsuario(
   userId: string,
   aviso: { titulo: string; corpo: string; url?: string; grupo?: string },
   token: string,
@@ -60,7 +53,7 @@ export async function enviarParaUsuario(
   const privada = process.env.VAPID_PRIVATE_KEY
 
   if (!publica || !privada) {
-    throw new Error('Faltam VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY no servidor.')
+    throw new Error('Faltam VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY nas variáveis da Vercel.')
   }
   webpush.setVapidDetails('mailto:joshuafguirado@gmail.com', publica, privada)
 
@@ -99,18 +92,14 @@ export async function enviarParaUsuario(
   return { entregues, aparelhos: inscricoes.length, removidos: mortos.length }
 }
 
-export default async function handler(request: Request) {
-  if (request.method !== 'POST') return json({ error: 'Use POST.' }, 405)
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Use POST.' })
 
-  const token = request.headers.get('authorization')?.replace(/^Bearer /, '') ?? ''
-  const userId = await usuarioDoToken(request)
-  if (!userId) return json({ error: 'Não autorizado.' }, 401)
+  const token = (req.headers.authorization ?? '').replace(/^Bearer /, '')
+  const userId = await usuarioDoToken(token)
+  if (!userId) return res.status(401).json({ error: 'Não autorizado.' })
 
-  const corpo = (await request.json().catch(() => ({}))) as {
-    titulo?: string
-    corpo?: string
-    url?: string
-  }
+  const corpo = (req.body ?? {}) as { titulo?: string; corpo?: string; url?: string }
 
   try {
     const resultado = await enviarParaUsuario(
@@ -124,10 +113,10 @@ export default async function handler(request: Request) {
     )
 
     if (resultado.aparelhos === 0) {
-      return json({ error: 'Nenhum aparelho cadastrado para receber.' }, 400)
+      return res.status(400).json({ error: 'Nenhum aparelho cadastrado para receber.' })
     }
-    return json(resultado, 200)
+    return res.status(200).json(resultado)
   } catch (e) {
-    return json({ error: e instanceof Error ? e.message : 'Falha ao enviar.' }, 500)
+    return res.status(500).json({ error: e instanceof Error ? e.message : 'Falha ao enviar.' })
   }
 }

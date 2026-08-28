@@ -31,13 +31,15 @@ export default function Assistant() {
   return (
     // A altura desconta cabeçalho, respiros e o balão do herói acima da tela.
     <div className="flex flex-col h-[calc(100svh-19rem)] min-h-[20rem]">
-      <div className="flex items-center justify-between gap-4 mb-6">
+      {/* No celular o título e o seletor de herói se espremiam lado a lado;
+          empilhar dá ar aos dois. */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Assistente</h1>
           <p className="text-text-dim text-sm mt-1">Seu esquadrão de IA</p>
         </div>
 
-        <div className="relative shrink-0">
+        <div className="relative shrink-0 self-start sm:self-auto">
           <button
             onClick={() => setPickerOpen((v) => !v)}
             className="flex items-center gap-2.5 border border-border rounded-xl pl-2 pr-3 py-1.5

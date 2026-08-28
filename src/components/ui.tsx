@@ -117,6 +117,61 @@ export function Field({
   )
 }
 
+/**
+ * CAMPO DE DINHEIRO, JÁ EM REAIS.
+ *
+ * O campo antigo era um `number` cru: aparecia "0" solto, aceitava ponto e
+ * vírgula misturados e não parecia dinheiro. Aqui o "R$" fica fixo à esquerda
+ * e o valor se formata sozinho enquanto o Joshua digita — ele só aperta os
+ * números e o 1234 vira "12,34".
+ *
+ * `value` é o valor em reais (ex: 12.34); `onValue` devolve o número.
+ */
+export function MoneyField({
+  label,
+  value,
+  onValue,
+  autoFocus,
+  placeholder = '0,00',
+}: {
+  label?: string
+  value: number
+  onValue: (v: number) => void
+  autoFocus?: boolean
+  placeholder?: string
+}) {
+  // Guardamos os centavos como inteiro: contas com float em dinheiro erram
+  // (0.1 + 0.2 não dá 0.3), e o teclado numérico do celular só manda dígitos.
+  const centavos = Math.round(value * 100)
+  const texto = centavos ? (centavos / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : ''
+
+  return (
+    <label className="block">
+      {label && <span className="text-xs text-text-dim mb-1.5 block">{label}</span>}
+      <div
+        className="flex items-center rounded-xl bg-surface-2 border border-border
+                   focus-within:border-accent transition-colors"
+      >
+        <span className="pl-3.5 pr-2 text-sm text-text-dim select-none">R$</span>
+        <input
+          autoFocus={autoFocus}
+          // `inputMode` abre o teclado numérico no celular sem virar um campo
+          // `number` (que traz as setinhas e aceita "e", "+", "-").
+          inputMode="numeric"
+          placeholder={placeholder}
+          value={texto}
+          onChange={(e) => {
+            const digitos = e.target.value.replace(/\D/g, '').slice(0, 11)
+            onValue(digitos ? Number(digitos) / 100 : 0)
+          }}
+          className="w-full bg-transparent py-2.5 pr-3.5 text-sm outline-none
+                     placeholder:text-text-faint"
+        />
+      </div>
+    </label>
+  )
+}
+
 export function TextArea({
   label,
   ...props
@@ -144,16 +199,23 @@ export function Select({
   )
 }
 
+/**
+ * Botão de salvar. Sem `onClick` ele envia o formulário em volta; com
+ * `onClick` vira um botão comum, para telas que salvam sem `<form>`.
+ */
 export function SubmitButton({
   children,
   disabled,
+  onClick,
 }: {
   children: ReactNode
   disabled?: boolean
+  onClick?: () => void
 }) {
   return (
     <button
-      type="submit"
+      type={onClick ? 'button' : 'submit'}
+      onClick={onClick}
       disabled={disabled}
       className="w-full rounded-xl bg-accent text-black font-semibold py-3
                  disabled:opacity-40 hover:bg-accent-light transition-all"

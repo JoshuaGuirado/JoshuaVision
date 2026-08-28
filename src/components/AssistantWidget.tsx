@@ -1,15 +1,21 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { X, Send, ChevronDown, Maximize2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { AI_MODELS, DEFAULT_MODEL_ID, findModel } from '../lib/models'
 import { useChat } from '../lib/useChat'
 import HeroAvatar from './HeroAvatar'
+import { useTemModalAberto } from './Modal'
 
 /**
  * Bolha de suporte fixa no canto — o esquadrão fica sempre a um clique,
  * em qualquer tela do sistema.
+ *
+ * Menos na tela do próprio Assistente: lá ela não servia para nada e ainda
+ * ficava por cima do botão de enviar.
  */
 export default function AssistantWidget() {
+  const { pathname } = useLocation()
+  const temModal = useTemModalAberto()
   const [open, setOpen] = useState(false)
   const [modelId, setModelId] = useState(DEFAULT_MODEL_ID)
   const [pickerOpen, setPickerOpen] = useState(false)
@@ -30,6 +36,10 @@ export default function AssistantWidget() {
   }
 
   const model = findModel(modelId)
+
+  // A tela cheia do assistente já é o chat: a bolha aqui só atrapalhava.
+  // E com um formulário aberto ela ficava por cima do botão de salvar.
+  if (pathname.startsWith('/assistente') || temModal) return null
 
   if (!open) {
     return (

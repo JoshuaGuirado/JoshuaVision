@@ -548,3 +548,47 @@ body::before {
     opacity: 0 !important;
   }
 }
+
+/* ---------- campos de data ----------
+   O navegador pinta o pedaço selecionado (o dia, o mês) com o azul do
+   sistema, que não tem nada a ver com o site. Aqui ele passa a usar o
+   vermelho da Marvel, e o ícone do calendário fica claro no fundo escuro. */
+input[type='date'],
+input[type='time'],
+input[type='month'] {
+  color-scheme: dark;
+}
+
+input[type='date']::-webkit-datetime-edit-year-field:focus,
+input[type='date']::-webkit-datetime-edit-month-field:focus,
+input[type='date']::-webkit-datetime-edit-day-field:focus,
+input[type='time']::-webkit-datetime-edit-hour-field:focus,
+input[type='time']::-webkit-datetime-edit-minute-field:focus {
+  background-color: var(--color-accent);
+  color: #fff;
+  border-radius: 4px;
+  outline: none;
+}
+
+/* o ícone do calendário vem cinza-escuro por padrão e some no fundo preto */
+input[type='date']::-webkit-calendar-picker-indicator,
+input[type='time']::-webkit-calendar-picker-indicator {
+  filter: invert(0.75);
+  cursor: pointer;
+  opacity: 0.8;
+}
+input[type='date']::-webkit-calendar-picker-indicator:hover,
+input[type='time']::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* tira as setinhas dos campos numéricos: elas não servem para nada aqui */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

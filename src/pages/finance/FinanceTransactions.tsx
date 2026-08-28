@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Plus, Trash2, Repeat } from 'lucide-react'
 import Modal from '../../components/Modal'
 import CategoryIcon from '../../components/CategoryIcon'
+import { Field, MoneyField, Select, SubmitButton } from '../../components/ui'
 import {
   createTransaction,
   deleteTransaction,
@@ -123,7 +124,8 @@ function TransactionForm({
   onSaved: () => void
 }) {
   const [type, setType] = useState<TransactionType>('expense')
-  const [amount, setAmount] = useState('')
+  // Valor em reais (12.34), não em texto: o campo de dinheiro já entrega número.
+  const [amount, setAmount] = useState(0)
   const [description, setDescription] = useState('')
   const [categoryId, setCategoryId] = useState<string>(categories[0]?.id ?? '')
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
@@ -131,11 +133,11 @@ function TransactionForm({
   const [saving, setSaving] = useState(false)
 
   async function handleSubmit() {
-    if (!amount || Number(amount) <= 0) return
+    if (amount <= 0) return
     setSaving(true)
     await createTransaction({
       type,
-      amount: Number(amount),
+      amount,
       category_id: categoryId || null,
       description: description.trim(),
       date,
@@ -162,25 +164,19 @@ function TransactionForm({
           ))}
         </div>
 
-        <input
-          type="number"
-          placeholder="Valor"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="w-full rounded-lg bg-surface-2 border border-border px-3 py-2 outline-none focus:border-accent"
-        />
+        <MoneyField autoFocus label="Valor" value={amount} onValue={setAmount} />
 
-        <input
-          placeholder="Descrição"
+        <Field
+          label="Descrição"
+          placeholder="Com o que foi?"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full rounded-lg bg-surface-2 border border-border px-3 py-2 outline-none focus:border-accent"
         />
 
-        <select
+        <Select
+          label="Categoria"
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="w-full rounded-lg bg-surface-2 border border-border px-3 py-2 outline-none focus:border-accent"
         >
           <option value="">Sem categoria</option>
           {categories.map((c) => (
@@ -188,32 +184,28 @@ function TransactionForm({
               {c.name}
             </option>
           ))}
-        </select>
+        </Select>
 
-        <input
+        <Field
+          label="Data"
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full rounded-lg bg-surface-2 border border-border px-3 py-2 outline-none focus:border-accent"
         />
 
-        <label className="flex items-center gap-2 text-sm text-text-dim">
+        <label className="flex items-center gap-2.5 text-sm text-text-dim cursor-pointer">
           <input
             type="checkbox"
             checked={isRecurring}
             onChange={(e) => setIsRecurring(e.target.checked)}
-            className="accent-yellow-500"
+            className="w-4 h-4 accent-[var(--color-accent)]"
           />
-          Recorrente
+          Repete todo mês
         </label>
 
-        <button
-          onClick={handleSubmit}
-          disabled={saving || !amount}
-          className="w-full rounded-lg bg-accent text-black font-semibold py-2.5 disabled:opacity-40"
-        >
+        <SubmitButton onClick={handleSubmit} disabled={saving || amount <= 0}>
           {saving ? 'Salvando...' : 'Salvar'}
-        </button>
+        </SubmitButton>
       </div>
     </Modal>
   )

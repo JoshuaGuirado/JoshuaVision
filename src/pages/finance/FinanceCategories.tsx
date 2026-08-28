@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Plus, Trash2, Pencil } from 'lucide-react'
-import Modal from '../components/Modal'
-import CategoryIcon, { CATEGORY_ICON_NAMES } from '../components/CategoryIcon'
-import { createCategory, deleteCategory, fetchCategories, updateCategory } from '../lib/data'
-import type { Category } from '../lib/types'
-import { formatMoney } from '../lib/format'
+import Modal from '../../components/Modal'
+import CategoryIcon, { CATEGORY_ICON_NAMES } from '../../components/CategoryIcon'
+import { createCategory, deleteCategory, fetchCategories, updateCategory } from '../../lib/data'
+import type { Category } from '../../lib/types'
+import { formatMoney } from '../../lib/format'
 
 const COLORS = ['#f5c518', '#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#f97316', '#14b8a6']
 
-export default function Categories() {
+export default function FinanceCategories() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Plus, Trash2, Repeat } from 'lucide-react'
-import Modal from '../components/Modal'
-import CategoryIcon from '../components/CategoryIcon'
+import Modal from '../../components/Modal'
+import CategoryIcon from '../../components/CategoryIcon'
 import {
   createTransaction,
   deleteTransaction,
   fetchCategories,
   fetchTransactions,
-} from '../lib/data'
-import type { Category, Transaction, TransactionType } from '../lib/types'
-import { formatMoney } from '../lib/format'
+} from '../../lib/data'
+import type { Category, Transaction, TransactionType } from '../../lib/types'
+import { formatMoney } from '../../lib/format'
 
-export default function Transactions() {
+export default function FinanceTransactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)

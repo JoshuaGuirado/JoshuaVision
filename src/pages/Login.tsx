@@ -19,10 +19,12 @@ export default function Login() {
   return (
     <div className="min-h-svh flex items-center justify-center bg-bg px-6">
       <div className="w-full max-w-xs">
-        <h1 className="text-center text-3xl font-extrabold tracking-tight mb-1">
-          T<span className="text-accent">J</span>V
-        </h1>
-        <p className="text-center text-text-dim text-sm mb-8">TheJoshuaVision</p>
+        <p className="text-center text-sm font-extrabold tracking-[0.3em] mb-2">
+          THE JOSHUA
+          <br />
+          <span className="text-accent">VISION</span>
+        </p>
+        <p className="text-center text-text-dim text-xs italic mb-10">Your life. Your vision.</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -31,9 +33,9 @@ export default function Login() {
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-text placeholder:text-text-dim outline-none focus:border-accent transition-colors"
+            className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-center text-text placeholder:text-text-dim outline-none focus:border-accent transition-colors"
           />
-          {error && <p className="text-danger text-sm">{error}</p>}
+          {error && <p className="text-danger text-sm text-center">{error}</p>}
           <button
             type="submit"
             disabled={loading || !password}

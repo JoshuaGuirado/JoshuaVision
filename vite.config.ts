@@ -10,9 +10,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'TJV — TheJoshuaVision',
+        name: 'THE JOSHUA VISION',
         short_name: 'TJV',
-        description: 'Sistema pessoal de gestão financeira e de vida',
+        description: 'Life OS pessoal — sua vida, sua visão',
         theme_color: '#0a0a0a',
         background_color: '#0a0a0a',
         display: 'standalone',

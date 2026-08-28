@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import CategoryIcon from '../components/CategoryIcon'
-import { fetchCategories, fetchTransactions } from '../lib/data'
-import type { Category, Transaction } from '../lib/types'
-import { currentMonthRange, formatMoney } from '../lib/format'
+import CategoryIcon from '../../components/CategoryIcon'
+import { fetchCategories, fetchTransactions } from '../../lib/data'
+import type { Category, Transaction } from '../../lib/types'
+import { currentMonthRange, formatMoney } from '../../lib/format'
 
-export default function Budget() {
+export default function FinanceBudget() {
   const [categories, setCategories] = useState<Category[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)

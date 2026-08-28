@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { TrendingUp, TrendingDown, Wallet } from 'lucide-react'
-import { fetchTransactions } from '../lib/data'
-import type { Transaction } from '../lib/types'
-import { currentMonthRange, formatMoney } from '../lib/format'
+import { fetchTransactions } from '../../lib/data'
+import type { Transaction } from '../../lib/types'
+import { currentMonthRange, formatMoney } from '../../lib/format'
 
-export default function Dashboard() {
+export default function FinanceHome() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,7 +27,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-xl font-bold">Olá, Joshua</h1>
+        <h1 className="text-xl font-bold">Finanças</h1>
         <p className="text-text-dim text-sm capitalize">{monthLabel}</p>
       </div>
 

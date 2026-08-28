@@ -1,0 +1,7 @@
+Coloque aqui as imagens dos herois.
+
+O modulo de Financas procura por: capitao.png
+Se o arquivo nao existir, o site mostra o escudo desenhado no lugar
+(nada quebra).
+
+Para adicionar: salve a imagem nesta pasta com o nome exato acima.

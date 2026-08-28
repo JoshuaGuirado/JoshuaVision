@@ -21,6 +21,10 @@ export type EmblemId =
   | 'hex'
   | 'core'
   | 'eagle'
+  | 'avengers'
+  | 'flask'
+  | 'guardians'
+  | 'four'
 
 type Props = {
   emblem: EmblemId
@@ -395,6 +399,120 @@ function Eagle({ alive }: { alive?: boolean }) {
   )
 }
 
+/** Vingadores — a seta circundada, o time todo reunido. */
+function Avengers({ alive }: { alive?: boolean }) {
+  return (
+    <>
+      <circle cx="100" cy="100" r="70" fill="#1a1005" />
+      <circle
+        cx="100"
+        cy="100"
+        r="64"
+        fill="none"
+        stroke="#e0263c"
+        strokeWidth="9"
+        strokeDasharray="300 100"
+        strokeLinecap="round"
+        transform="rotate(-42 100 100)"
+        className={alive ? 'tjv-orbit' : undefined}
+        style={{ transformOrigin: '100px 100px' }}
+      />
+      <g {...breathe(alive)}>
+        {/* haste central com a seta apontando pra cima */}
+        <path d="M100 32 L124 74 L108 74 L108 168 L92 168 L92 74 L76 74 Z" fill="#f0a92c" />
+        {/* travessa que fecha o símbolo */}
+        <rect x="62" y="112" width="76" height="15" rx="4" fill="#f0a92c" />
+      </g>
+    </>
+  )
+}
+
+/** Bruce Banner — o frasco do laboratório borbulhando. */
+function Flask({ alive }: { alive?: boolean }) {
+  return (
+    <>
+      <circle cx="100" cy="100" r="70" fill="#0f2113" />
+      <g {...breathe(alive)}>
+        {/* vidraria */}
+        <path
+          d="M86 40 H114 V88 L142 150 A10 10 0 0 1 133 166 H67 A10 10 0 0 1 58 150 L86 88 Z"
+          fill="none"
+          stroke="#cfe6d4"
+          strokeWidth="6"
+          strokeLinejoin="round"
+        />
+        {/* líquido gama */}
+        <path d="M74 122 L126 122 L138 152 A8 8 0 0 1 131 162 H69 A8 8 0 0 1 62 152 Z" fill="#4caf50" />
+        <rect x="80" y="32" width="40" height="11" rx="5" fill="#cfe6d4" />
+      </g>
+      {/* bolhas subindo */}
+      <g className={alive ? 'tjv-bubble' : undefined}>
+        <circle cx="88" cy="140" r="5" fill="#8ce89a" />
+        <circle cx="106" cy="146" r="4" fill="#8ce89a" style={{ animationDelay: '400ms' }} />
+        <circle cx="118" cy="138" r="3.5" fill="#8ce89a" style={{ animationDelay: '800ms' }} />
+      </g>
+    </>
+  )
+}
+
+/** Guardiões da Galáxia — a insígnia estelar do time. */
+function Guardians({ alive }: { alive?: boolean }) {
+  return (
+    <>
+      <circle cx="100" cy="100" r="70" fill="#1b0f2e" />
+      {/* órbita externa */}
+      <g className={alive ? 'tjv-orbit' : undefined} style={{ transformOrigin: '100px 100px' }}>
+        <ellipse
+          cx="100"
+          cy="100"
+          rx="66"
+          ry="26"
+          fill="none"
+          stroke="#ff7ac0"
+          strokeWidth="5"
+          transform="rotate(-24 100 100)"
+        />
+      </g>
+      {/* planeta central */}
+      <g {...breathe(alive)}>
+        <circle cx="100" cy="100" r="38" fill="#ffa63f" />
+        <path d="M70 88 Q100 76 130 90 Q100 100 70 88 Z" fill="#ffd08a" opacity="0.8" />
+        <path d="M74 116 Q104 106 130 118 Q100 128 74 116 Z" fill="#e0663c" opacity="0.7" />
+      </g>
+      {/* estrelas piscando ao redor */}
+      <g className={alive ? 'tjv-ping' : undefined} style={{ transformOrigin: '100px 100px' }}>
+        <polygon points={starPoints(44, 46, 9)} fill="#ffe9a8" />
+        <polygon points={starPoints(158, 62, 7)} fill="#ffe9a8" />
+        <polygon points={starPoints(150, 152, 8)} fill="#ffe9a8" />
+      </g>
+    </>
+  )
+}
+
+/** Quarteto Fantástico — o 4 dentro do círculo. */
+function Four({ alive }: { alive?: boolean }) {
+  return (
+    <>
+      <circle cx="100" cy="100" r="70" fill="#0c1a2e" />
+      <circle
+        cx="100"
+        cy="100"
+        r="62"
+        fill="none"
+        stroke="#4a8fe0"
+        strokeWidth="8"
+        className={alive ? 'tjv-glow' : undefined}
+        style={{ transformOrigin: '100px 100px' }}
+      />
+      <g {...breathe(alive)}>
+        {/* diagonal e haste do "4" */}
+        <path d="M104 46 L58 122 H132" fill="none" stroke="#d8e6fb" strokeWidth="15" strokeLinejoin="round" />
+        <rect x="98" y="46" width="16" height="112" rx="4" fill="#d8e6fb" />
+      </g>
+    </>
+  )
+}
+
 const EMBLEMS: Record<EmblemId, (p: { alive?: boolean }) => React.ReactElement> = {
   shield: Shield,
   hammer: Hammer,
@@ -408,6 +526,10 @@ const EMBLEMS: Record<EmblemId, (p: { alive?: boolean }) => React.ReactElement> 
   hex: Hex,
   core: Core,
   eagle: Eagle,
+  avengers: Avengers,
+  flask: Flask,
+  guardians: Guardians,
+  four: Four,
 }
 
 export default function HeroEmblem({ emblem, size = 64, alive = false, className }: Props) {

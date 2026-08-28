@@ -10,7 +10,7 @@ import {
   GraduationCap,
   HeartPulse,
   StickyNote,
-  Shield,
+  Sparkles,
   Settings,
 } from 'lucide-react'
 import type { EmblemId } from '../components/HeroEmblem'
@@ -23,7 +23,7 @@ export type NavItem = {
   description: string
   /** Cor do módulo — vem do herói que o representa. */
   color: string
-  /** Herói associado ao módulo, exibido no cabeçalho da tela. */
+  /** Herói associado ao módulo, escolhido pelo Joshua. */
   hero: string
   /** Emblema desenhado desse herói. */
   emblem: EmblemId
@@ -33,7 +33,7 @@ export type NavItem = {
  * Fonte única de verdade dos módulos: Home, cabeçalho e rotas leem daqui.
  * São 12 de propósito — fecham a grade 4x3 sem sobra.
  *
- * Cada módulo tem um herói cuja característica combina com a função da tela.
+ * O herói de cada módulo foi escolhido pelo Joshua, um a um.
  */
 export const MODULES: NavItem[] = [
   {
@@ -43,8 +43,8 @@ export const MODULES: NavItem[] = [
     implemented: true,
     description: 'Resumo do seu dia',
     color: '#e0263c',
-    hero: 'Capitão América',
-    emblem: 'shield',
+    hero: 'Vingadores',
+    emblem: 'avengers',
   },
   {
     path: '/agenda',
@@ -62,9 +62,9 @@ export const MODULES: NavItem[] = [
     icon: Wallet,
     implemented: true,
     description: 'Gastos, receitas e orçamento',
-    color: '#f0a92c',
-    hero: 'Homem de Ferro',
-    emblem: 'reactor',
+    color: '#e0263c',
+    hero: 'Capitão América',
+    emblem: 'shield',
   },
   {
     path: '/tarefas',
@@ -72,9 +72,9 @@ export const MODULES: NavItem[] = [
     icon: ListChecks,
     implemented: true,
     description: 'O que precisa ser feito',
-    color: '#e34a4a',
-    hero: 'Homem-Aranha',
-    emblem: 'web',
+    color: '#f0a92c',
+    hero: 'Homem de Ferro',
+    emblem: 'reactor',
   },
   {
     path: '/metas',
@@ -82,9 +82,9 @@ export const MODULES: NavItem[] = [
     icon: Target,
     implemented: true,
     description: 'Objetivos e progresso',
-    color: '#c85050',
-    hero: 'Gavião Arqueiro',
-    emblem: 'arrow',
+    color: '#e34a4a',
+    hero: 'Homem-Aranha',
+    emblem: 'web',
   },
   {
     path: '/habitos',
@@ -112,9 +112,9 @@ export const MODULES: NavItem[] = [
     icon: GraduationCap,
     implemented: true,
     description: 'Matérias e progresso',
-    color: '#f5c33b',
-    hero: 'Visão',
-    emblem: 'gem',
+    color: '#4caf50',
+    hero: 'Bruce Banner',
+    emblem: 'flask',
   },
   {
     path: '/saude',
@@ -122,9 +122,9 @@ export const MODULES: NavItem[] = [
     icon: HeartPulse,
     implemented: true,
     description: 'Rotina e bem-estar',
-    color: '#4caf50',
-    hero: 'Hulk',
-    emblem: 'fist',
+    color: '#ff7ac0',
+    hero: 'Guardiões da Galáxia',
+    emblem: 'guardians',
   },
   {
     path: '/notas',
@@ -132,18 +132,18 @@ export const MODULES: NavItem[] = [
     icon: StickyNote,
     implemented: true,
     description: 'Informações importantes',
-    color: '#ff6b7d',
-    hero: 'Feiticeira Escarlate',
-    emblem: 'hex',
+    color: '#f5c33b',
+    hero: 'Visão',
+    emblem: 'gem',
   },
   {
     path: '/assistente',
     label: 'Assistente',
-    icon: Shield,
+    icon: Sparkles,
     implemented: true,
     description: 'Seu esquadrão de IA',
-    color: '#3fc9ff',
-    hero: 'J.A.R.V.I.S.',
+    color: '#ffa63f',
+    hero: 'F.R.I.D.A.Y.',
     emblem: 'core',
   },
   {
@@ -152,9 +152,9 @@ export const MODULES: NavItem[] = [
     icon: Settings,
     implemented: true,
     description: 'Preferências do sistema',
-    color: '#7f93bb',
-    hero: 'Nick Fury',
-    emblem: 'eagle',
+    color: '#4a8fe0',
+    hero: 'Quarteto Fantástico',
+    emblem: 'four',
   },
 ]
 

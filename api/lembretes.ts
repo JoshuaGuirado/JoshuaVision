@@ -1,5 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import webpush from 'web-push'
+import { createRequire } from 'node:module'
+
+// web-push e CommonJS antiga. Com "type": "module" no package.json, o
+// import direto derrubava a funcao inteira antes de qualquer codigo nosso
+// rodar (FUNCTION_INVOCATION_FAILED). createRequire carrega do jeito que
+// a biblioteca espera.
+const exigir = createRequire(import.meta.url)
+const webpush = exigir('web-push') as typeof import('web-push')
 
 /**
  * O RESUMO DIÁRIO.

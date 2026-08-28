@@ -46,9 +46,11 @@ export function useCollection<T extends { id: string }>(table: string, order: Or
     // evita recarregar em loop.
   }, [table, order.column, order.ascending])
 
+  // `versaoDados` faz a lista recarregar quando algo é criado por fora (o
+  // botão de adicionar rápido, por exemplo).
   useEffect(() => {
     load()
-  }, [load])
+  }, [load, fx.versaoDados])
 
   async function create(values: Record<string, unknown>) {
     const { data: userData } = await supabase.auth.getUser()

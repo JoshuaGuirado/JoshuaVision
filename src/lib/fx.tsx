@@ -39,6 +39,10 @@ type FxValue = {
   preview: (kind: BangKind) => void
   /** Cala a boca agora (troca de tela, por exemplo). */
   hush: () => void
+  /** Sobe quando algo é criado fora da tela atual; as listas recarregam. */
+  versaoDados: number
+  /** Avisa as listas abertas de que os dados mudaram. */
+  avisarMudanca: () => void
 }
 
 const CHAVE = 'tjv:fx'
@@ -176,9 +180,15 @@ export function FxProvider({ children }: { children: ReactNode }) {
 
   const preview = useCallback((kind: BangKind) => tocar(kind), [])
 
+  // O "adicionar rápido" grava direto no banco, de qualquer tela. Sem este
+  // aviso, criar uma tarefa estando na tela de Tarefas não mostrava nada até
+  // recarregar a página.
+  const [versaoDados, setVersaoDados] = useState(0)
+  const avisarMudanca = useCallback(() => setVersaoDados((v) => v + 1), [])
+
   const valor = useMemo(
-    () => ({ prefs, setPref, bang, speak, hush, preview }),
-    [prefs, setPref, bang, speak, hush, preview],
+    () => ({ prefs, setPref, bang, speak, hush, preview, versaoDados, avisarMudanca }),
+    [prefs, setPref, bang, speak, hush, preview, versaoDados, avisarMudanca],
   )
 
   return (

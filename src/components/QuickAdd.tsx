@@ -12,8 +12,8 @@ import { useFx } from '../lib/fx'
  * módulo e só então abrir o formulário. Estes são os três atalhos que ele mais
  * usa — tarefa, nota e lançamento — disponíveis de qualquer lugar do site.
  *
- * Escreve direto no Supabase em vez de passar pelo `useCollection`: aqui não
- * existe lista para recarregar, é só criar e sair.
+ * Escreve direto no Supabase em vez de passar pelo `useCollection`, e no fim
+ * avisa o resto do site (`avisarMudanca`) para as listas abertas recarregarem.
  */
 type Tipo = 'tarefa' | 'nota' | 'gasto'
 
@@ -89,6 +89,7 @@ function QuickAddModal({ onClose }: { onClose: () => void }) {
       return
     }
     fx.bang(aba.bang, aba.cor, tipo === 'gasto' ? 'shield' : 'tech')
+    fx.avisarMudanca()
     onClose()
   }
 

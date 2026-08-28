@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { useFx } from './fx'
 
 /**
  * OS NÚMEROS DA VIDA DO JOSHUA, EM UMA CONSULTA SÓ.
@@ -48,6 +49,7 @@ export function hojeISO(): string {
 export function useStats() {
   const [stats, setStats] = useState<Stats>(VAZIO)
   const [loading, setLoading] = useState(true)
+  const { versaoDados } = useFx()
 
   const load = useCallback(async () => {
     const hoje = hojeISO()
@@ -112,7 +114,8 @@ export function useStats() {
     // Um erro aqui não pode derrubar a tela: números são enfeite informativo,
     // não o conteúdo principal.
     load().catch(() => setLoading(false))
-  }, [load])
+    // recontar quando algo é criado pelo "adicionar rápido"
+  }, [load, versaoDados])
 
   return { stats, loading, reload: load }
 }

@@ -39,6 +39,40 @@ type FxPrefs = {
 export type PerfilVoz = { genero: 'm' | 'f'; pitch: number; rate: number }
 
 /**
+ * VOZES GRAVADAS — as mesmas em qualquer aparelho.
+ *
+ * A voz do navegador muda de aparelho para aparelho (o iPhone do Joshua só
+ * oferece voz feminina; o computador dele tem duas). Estes arquivos foram
+ * gerados uma vez por `scripts/gerar-vozes.mjs` e ficam no site, então o Thor
+ * soa exatamente igual no celular e no computador.
+ *
+ * O mapa liga o texto da fala ao arquivo. Falas que ainda não foram gravadas —
+ * e as que mudam com os dados do Joshua ("3 tarefas na fila") — caem na voz do
+ * aparelho, que continua de reserva.
+ */
+let gravadas: Record<string, string> = {}
+void import('./vozes.json').then((m) => {
+  gravadas = (m.default ?? m) as Record<string, string>
+})
+
+/** Toca o arquivo gravado desta fala. Devolve `false` se não existir um. */
+function tocarGravada(texto: string, aoTerminar?: () => void): boolean {
+  const arquivo = gravadas[texto]
+  if (!arquivo) return false
+
+  const audio = new Audio(arquivo)
+  audio.addEventListener('ended', () => aoTerminar?.())
+  // O navegador pode recusar tocar sem um toque recente. Nesse caso não
+  // adianta insistir: é melhor ficar em silêncio do que estourar um erro.
+  void audio.play().catch(() => {})
+  vozAtual = audio
+  return true
+}
+
+/** A fala gravada que está tocando agora, para conseguir interrompê-la. */
+let vozAtual: HTMLAudioElement | null = null
+
+/**
  * ARRUMA O TEXTO ANTES DE FALAR.
  *
  * O que está escrito na tela nem sempre é o que soa bem. A voz do aparelho
@@ -235,14 +269,28 @@ export function FxProvider({ children }: { children: ReactNode }) {
 
   const hush = useCallback(() => {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+    if (vozAtual) {
+      vozAtual.pause()
+      vozAtual = null
+    }
   }, [])
 
   const speak = useCallback(
     (text: string, perfil?: PerfilVoz, forcar = false) => {
       // `forcar` existe para a amostra em Configurações: quando o Joshua acaba
       // de ligar a voz, a preferência ainda não chegou aqui.
-      if ((!prefs.voice && !forcar) || !('speechSynthesis' in window)) return
-      window.speechSynthesis.cancel()
+      if (!prefs.voice && !forcar) return
+
+      // Interrompe o que estiver falando: duas vozes juntas nao se entende.
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+      if (vozAtual) {
+        vozAtual.pause()
+        vozAtual = null
+      }
+
+      // Primeiro a voz gravada do heroi — e a mesma em qualquer aparelho.
+      if (tocarGravada(text)) return
+      if (!('speechSynthesis' in window)) return
 
       const fala = new SpeechSynthesisUtterance(paraFala(text))
       fala.lang = 'pt-BR'

@@ -19,12 +19,14 @@
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url)
 // O pacote 'lamejs' original quebra no Node ('MPEGMode is not defined'); este
-// fork corrigido é o mesmo codificador, sem o bug.
-const lamejs = require('@breezystack/lamejs')
+// fork corrigido e o mesmo codificador, sem o bug.
+//
+// Precisa ser carregado com import() e nao com require(): o pacote so publica
+// a versao ESM, e o require devolvia um objeto vazio — o que fazia toda fala
+// baixada ser descartada na conversao.
+const modulo = await import('@breezystack/lamejs')
+const lamejs = modulo.default ?? modulo
 
 const SAIDA = 'public/vozes'
 // O áudio cru fica guardado aqui: se a conversão falhar, não gastamos de novo

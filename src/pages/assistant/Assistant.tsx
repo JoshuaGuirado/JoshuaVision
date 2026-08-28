@@ -12,6 +12,9 @@ export default function Assistant() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // Só desce quando já existe conversa. Sem esta guarda, a tela vazia rolava
+    // sozinha ao abrir e escondia a fala da F.R.I.D.A.Y. lá em cima.
+    if (messages.length === 0) return
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
@@ -26,7 +29,8 @@ export default function Assistant() {
   const model = findModel(modelId)
 
   return (
-    <div className="flex flex-col h-[calc(100svh-9rem)]">
+    // A altura desconta cabeçalho, respiros e o balão do herói acima da tela.
+    <div className="flex flex-col h-[calc(100svh-19rem)] min-h-[20rem]">
       <div className="flex items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Assistente</h1>

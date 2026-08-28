@@ -7,9 +7,9 @@ import { useAuth } from '../contexts/AuthContext'
 
 function greeting() {
   const hour = new Date().getHours()
-  if (hour < 12) return 'Good morning'
-  if (hour < 18) return 'Good afternoon'
-  return 'Good evening'
+  if (hour < 12) return 'Bom dia'
+  if (hour < 18) return 'Boa tarde'
+  return 'Boa noite'
 }
 
 export default function Home() {
@@ -51,7 +51,7 @@ export default function Home() {
             </span>
             .
           </h1>
-          <p className="text-text-dim text-sm mt-2 capitalize">{dateLabel}</p>
+          <p className="text-text-dim text-sm mt-2 first-letter:uppercase">{dateLabel}</p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">

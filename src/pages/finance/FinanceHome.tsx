@@ -28,7 +28,7 @@ export default function FinanceHome() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-bold">Finanças</h1>
-        <p className="text-text-dim text-sm capitalize">{monthLabel}</p>
+        <p className="text-text-dim text-sm first-letter:uppercase">{monthLabel}</p>
       </div>
 
       <div className="bg-surface border border-border rounded-2xl p-5">

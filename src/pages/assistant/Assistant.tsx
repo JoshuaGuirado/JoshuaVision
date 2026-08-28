@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Send, ChevronDown } from 'lucide-react'
 import { AI_MODELS, DEFAULT_MODEL_ID, findModel } from '../../lib/models'
 import { useChat } from '../../lib/useChat'
-import { LogoMark } from '../../components/Logo'
+import HeroAvatar from '../../components/HeroAvatar'
 
 export default function Assistant() {
   const [input, setInput] = useState('')
@@ -36,13 +36,10 @@ export default function Assistant() {
         <div className="relative shrink-0">
           <button
             onClick={() => setPickerOpen((v) => !v)}
-            className="flex items-center gap-2 border border-border rounded-xl px-3 py-2
+            className="flex items-center gap-2.5 border border-border rounded-xl pl-2 pr-3 py-1.5
                        hover:border-accent transition-colors"
           >
-            <span
-              className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: model?.color }}
-            />
+            <HeroAvatar modelId={modelId} size={28} alive />
             <span className="text-sm font-medium">{model?.label}</span>
             <ChevronDown size={14} className="text-text-faint" />
           </button>
@@ -58,14 +55,11 @@ export default function Assistant() {
                       setModelId(m.id)
                       setPickerOpen(false)
                     }}
-                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors flex items-start gap-3 ${
+                    className={`w-full text-left px-2.5 py-2.5 rounded-lg transition-colors flex items-center gap-3 ${
                       m.id === modelId ? 'bg-surface-2' : 'hover:bg-surface-2'
                     }`}
                   >
-                    <span
-                      className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                      style={{ backgroundColor: m.color }}
-                    />
+                    <HeroAvatar modelId={m.id} size={34} />
                     <span className="min-w-0 flex-1">
                       <span className="flex items-baseline gap-2">
                         <span className="text-sm font-semibold">{m.label}</span>
@@ -84,10 +78,13 @@ export default function Assistant() {
       <div className="flex-1 overflow-y-auto space-y-4 pr-1">
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center gap-4">
-            <LogoMark size={72} animated />
-            <p className="text-text-dim text-sm max-w-xs">
-              O esquadrão está pronto. Pergunte qualquer coisa — eles conhecem o seu sistema.
-            </p>
+            <HeroAvatar modelId={modelId} size={104} alive />
+            <div>
+              <p className="font-semibold">{model?.label}</p>
+              <p className="text-text-dim text-sm max-w-xs mt-1">
+                {model?.hint}. Pergunte qualquer coisa — ele conhece o seu sistema.
+              </p>
+            </div>
           </div>
         )}
 

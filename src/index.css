@@ -156,12 +156,73 @@ body::before {
   animation: tjv-spin 14s linear infinite;
 }
 
+/* ---------- vida dos avatares do esquadrão ---------- */
+
+/* respiração: o símbolo "vive" em vez de ficar parado */
+@keyframes tjv-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
+}
+
+/* asas do Falcão batendo devagar */
+@keyframes tjv-flap {
+  0%,
+  100% {
+    transform: scaleY(1) translateY(0);
+  }
+  50% {
+    transform: scaleY(0.82) translateY(3px);
+  }
+}
+
+/* anel de varredura girando na moldura */
+@keyframes tjv-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* alvo do Agente 13 pulsando */
+@keyframes tjv-ping {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tjv-breathe {
+  animation: tjv-breathe 3.4s ease-in-out infinite;
+}
+.tjv-flap {
+  animation: tjv-flap 2.4s ease-in-out infinite;
+}
+.tjv-orbit {
+  animation: tjv-orbit 6s linear infinite;
+}
+.tjv-ping {
+  animation: tjv-ping 2.2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tjv-rise,
   .tjv-fade,
   .tjv-pop,
   .tjv-pulse,
-  .tjv-spin-slow {
+  .tjv-spin-slow,
+  .tjv-breathe,
+  .tjv-flap,
+  .tjv-orbit,
+  .tjv-ping {
     animation: none;
   }
 }

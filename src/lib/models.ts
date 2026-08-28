@@ -1,3 +1,5 @@
+import type { EmblemId } from '../components/HeroEmblem'
+
 export type Provider = 'anthropic' | 'google'
 
 export type AiModel = {
@@ -9,6 +11,8 @@ export type AiModel = {
   provider: Provider
   hint: string
   color: string
+  /** Emblema animado do herói. */
+  emblem: EmblemId
   /** 1 = mais poderoso. Ordena a lista de escolha. */
   rank: number
 }
@@ -25,6 +29,7 @@ const SQUAD: AiModel[] = [
     provider: 'anthropic',
     hint: 'O líder — raciocínio mais profundo',
     color: '#e0263c',
+    emblem: 'shield',
     rank: 1,
   },
   {
@@ -34,6 +39,7 @@ const SQUAD: AiModel[] = [
     provider: 'anthropic',
     hint: 'Poder bruto com precisão',
     color: '#6db3f2',
+    emblem: 'hammer',
     rank: 2,
   },
   {
@@ -43,6 +49,7 @@ const SQUAD: AiModel[] = [
     provider: 'google',
     hint: 'Força imbatível — e gratuito',
     color: '#4caf50',
+    emblem: 'fist',
     rank: 3,
   },
   {
@@ -52,6 +59,7 @@ const SQUAD: AiModel[] = [
     provider: 'anthropic',
     hint: 'Tecnologia rápida e afiada',
     color: '#f0a92c',
+    emblem: 'reactor',
     rank: 4,
   },
   {
@@ -61,6 +69,7 @@ const SQUAD: AiModel[] = [
     provider: 'google',
     hint: 'O mais ágil — gratuito',
     color: '#e34a4a',
+    emblem: 'web',
     rank: 5,
   },
 ]

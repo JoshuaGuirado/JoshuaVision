@@ -216,6 +216,77 @@ body::before {
   }
 }
 
+/* mesmo giro, sentido contrário — usado no portal */
+@keyframes tjv-orbit-rev {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* escudo arremessado: gira com pausas, como voando e voltando */
+@keyframes tjv-throw {
+  0%,
+  18% {
+    transform: rotate(0deg);
+  }
+  62%,
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* reflexo metálico atravessando o escudo */
+@keyframes tjv-sweep {
+  0%,
+  55% {
+    transform: translateX(0);
+  }
+  85%,
+  100% {
+    transform: translateX(320px);
+  }
+}
+
+/* raio individual do Thor disparando */
+@keyframes tjv-bolt {
+  0%,
+  70%,
+  100% {
+    opacity: 0.18;
+  }
+  74%,
+  84% {
+    opacity: 1;
+  }
+  79% {
+    opacity: 0.45;
+  }
+}
+
+/* chama dos propulsores do Homem de Ferro */
+@keyframes tjv-thrust {
+  0%,
+  100% {
+    transform: scaleY(0.72);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scaleY(1.15);
+    opacity: 1;
+  }
+}
+
+/* barras de voz do assistente */
+@keyframes tjv-wave {
+  0%,
+  100% {
+    transform: scaleY(0.55);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
 /* alvo do Agente 13 pulsando */
 @keyframes tjv-ping {
   0%,
@@ -241,11 +312,31 @@ body::before {
 .tjv-glow {
   animation: tjv-glow 2.2s ease-in-out infinite;
 }
+.tjv-throw {
+  animation: tjv-throw 4.5s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+}
+.tjv-sweep {
+  animation: tjv-sweep 4.5s ease-in-out infinite;
+}
+.tjv-bolt {
+  animation: tjv-bolt 2.8s linear infinite;
+}
+.tjv-thrust {
+  animation: tjv-thrust 0.75s ease-in-out infinite;
+}
 .tjv-orbit {
   animation: tjv-orbit 6s linear infinite;
 }
+.tjv-orbit-rev {
+  animation: tjv-orbit-rev 8s linear infinite;
+}
 .tjv-ping {
   animation: tjv-ping 2.2s ease-in-out infinite;
+}
+/* cada barra herda o próprio delay via style inline */
+.tjv-wave rect {
+  animation: tjv-wave 1.1s ease-in-out infinite;
+  transform-origin: center;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -258,8 +349,14 @@ body::before {
   .tjv-spark,
   .tjv-smash,
   .tjv-glow,
+  .tjv-throw,
+  .tjv-sweep,
+  .tjv-bolt,
+  .tjv-thrust,
   .tjv-orbit,
-  .tjv-ping {
+  .tjv-orbit-rev,
+  .tjv-ping,
+  .tjv-wave rect {
     animation: none;
   }
 }

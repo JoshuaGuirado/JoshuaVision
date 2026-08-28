@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { MODULES } from '../lib/nav'
 import { LogoMark } from '../components/Logo'
+import HeroEmblem from '../components/HeroEmblem'
 import { useAuth } from '../contexts/AuthContext'
 
 function greeting() {
@@ -54,7 +55,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-          {MODULES.map(({ path, label, icon: Icon, description, color }, i) => (
+          {MODULES.map(({ path, label, hero, emblem, description, color }, i) => (
             <Link
               key={path}
               to={path}
@@ -81,21 +82,19 @@ export default function Home() {
               />
 
               <div className="relative">
-                <span
-                  className="inline-flex w-10 h-10 sm:w-11 sm:h-11 rounded-xl items-center justify-center
-                             transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6"
-                  style={{
-                    backgroundColor: `${color}1f`,
-                    color,
-                    boxShadow: `inset 0 0 0 1px ${color}33`,
-                  }}
-                >
-                  <Icon size={20} strokeWidth={1.75} />
+                <span className="inline-block transition-transform duration-300 group-hover:scale-110">
+                  <HeroEmblem emblem={emblem} size={44} alive />
                 </span>
               </div>
 
               <div className="relative mt-4">
                 <p className="font-semibold text-[0.95rem] leading-tight">{label}</p>
+                <p
+                  className="text-[11px] mt-1 font-medium tracking-wide"
+                  style={{ color }}
+                >
+                  {hero}
+                </p>
                 <p className="text-text-faint text-xs mt-1 leading-snug hidden sm:block">
                   {description}
                 </p>

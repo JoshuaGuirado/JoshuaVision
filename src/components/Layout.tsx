@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { findModule } from '../lib/nav'
 import { LogoMark } from './Logo'
+import HeroEmblem from './HeroEmblem'
 
 /**
  * Casca das telas internas. A Home fica fora daqui de propósito — lá o Joshua
@@ -26,13 +27,18 @@ export default function Layout() {
           {active && (
             <div className="flex items-center gap-2.5 min-w-0">
               <span className="text-border">/</span>
-              <span
-                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                style={{ backgroundColor: `${active.color}1a`, color: active.color }}
-              >
-                <active.icon size={15} strokeWidth={1.75} />
+              <HeroEmblem emblem={active.emblem} size={28} alive />
+              <span className="min-w-0">
+                <span className="block font-semibold text-sm truncate leading-tight">
+                  {active.label}
+                </span>
+                <span
+                  className="block text-[10px] truncate leading-tight"
+                  style={{ color: active.color }}
+                >
+                  {active.hero}
+                </span>
               </span>
-              <span className="font-semibold text-sm truncate">{active.label}</span>
             </div>
           )}
 

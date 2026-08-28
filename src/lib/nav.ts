@@ -37,7 +37,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '/diario', label: 'Diário', icon: BookOpen, implemented: false, description: 'Espaço privado de reflexão' },
   { path: '/notas', label: 'Notas', icon: StickyNote, implemented: false, description: 'Informações importantes' },
   { path: '/visao', label: 'Visão', icon: Compass, implemented: false, description: 'Planejamento de vida e futuro' },
-  { path: '/assistente', label: 'Assistente', icon: Sparkles, implemented: false, description: 'Seu copiloto de IA' },
+  { path: '/assistente', label: 'Assistente', icon: Sparkles, implemented: true, description: 'Seu copiloto de IA' },
 ]
 
 export const SETTINGS_ITEM: NavItem = {

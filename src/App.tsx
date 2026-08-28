@@ -11,6 +11,7 @@ import FinanceHome from './pages/finance/FinanceHome'
 import FinanceTransactions from './pages/finance/FinanceTransactions'
 import FinanceCategories from './pages/finance/FinanceCategories'
 import FinanceBudget from './pages/finance/FinanceBudget'
+import Assistant from './pages/assistant/Assistant'
 import { HOME_MODULES } from './lib/nav'
 import { isSupabaseConfigured } from './lib/supabase'
 
@@ -32,6 +33,7 @@ function AppRoutes() {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/configuracoes" element={<Settings />} />
+        <Route path="/assistente" element={<Assistant />} />
 
         <Route path="/financas" element={<FinanceLayout />}>
           <Route index element={<FinanceHome />} />

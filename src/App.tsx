@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Layout from './components/Layout'
 import Login from './pages/Login'
+import SetupNeeded from './pages/SetupNeeded'
 import Home from './pages/Home'
 import Settings from './pages/Settings'
 import ComingSoon from './pages/ComingSoon'
@@ -11,6 +12,7 @@ import FinanceTransactions from './pages/finance/FinanceTransactions'
 import FinanceCategories from './pages/finance/FinanceCategories'
 import FinanceBudget from './pages/finance/FinanceBudget'
 import { HOME_MODULES } from './lib/nav'
+import { isSupabaseConfigured } from './lib/supabase'
 
 function AppRoutes() {
   const { session, loading } = useAuth()
@@ -53,6 +55,10 @@ function AppRoutes() {
 }
 
 export default function App() {
+  if (!isSupabaseConfigured) {
+    return <SetupNeeded />
+  }
+
   return (
     <BrowserRouter>
       <AuthProvider>

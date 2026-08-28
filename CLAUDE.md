@@ -1,46 +1,71 @@
 # THE JOSHUA VISION
 
 ## Sobre o projeto
-"Life OS" pessoal do Joshua — painel central que organiza toda a vida em módulos
-(Agenda, Finanças, Tarefas, Metas, Hábitos, Projetos, Estudos, Saúde, Diário,
-Notas, Visão). Usuário único. Stack: Vite + React + TypeScript + Tailwind CSS v4 +
-Supabase (auth + Postgres), publicado como PWA (instalável via Safari).
+"Life OS" pessoal do Joshua — painel central que organiza toda a vida em módulos.
+Usuário único. Stack: Vite + React 19 + TypeScript + Tailwind CSS v4 + Supabase
+(auth + Postgres), publicado como PWA instalável e hospedado na Vercel em
+https://joshuavision.vercel.app
 
-Identidade visual: fundo preto, amarelo como cor de destaque, tipografia com
-tracking largo no branding. Premium, minimalista, nada genérico.
+**Fale português do Brasil com o usuário.** Ele não é programador — explique em
+termos simples, sem jargão, e diga o que ele precisa fazer com passo a passo.
+
+## Identidade visual: tema Marvel
+Fundo azul-marinho profundo, vermelho do escudo do Capitão América nas ações,
+prata nos detalhes. A logo é o escudo (anéis vermelho/branco, campo azul,
+estrela central). Animações sutis por toda parte — o usuário gosta de vida na
+interface. Ver `src/index.css` (paleta + keyframes) e `src/components/Logo.tsx`.
 
 ## Arquitetura
-- `src/lib/nav.ts` é a fonte única de verdade dos módulos (rota, ícone, label,
-  descrição, se já está implementado). Sidebar, menu mobile e os cards da Home
-  leem daqui — adicionar um módulo novo começa por esse arquivo.
-- Módulos ainda não implementados usam o componente genérico `ComingSoon`.
-- Cada módulo implementado ganha sua própria pasta em `src/pages/<modulo>/`,
-  com um `<Modulo>Layout.tsx` se precisar de sub-navegação própria (ver
-  `src/pages/finance/` como referência: FinanceLayout + FinanceHome +
-  FinanceTransactions + FinanceCategories + FinanceBudget).
-- `src/components/Layout.tsx` é a casca do app inteiro (Sidebar desktop +
-  MobileNav) e fica fora do que cada módulo controla.
+- `src/lib/nav.ts` é a **fonte única de verdade** dos módulos (rota, ícone, cor,
+  descrição). Home, cabeçalho e rotas leem daqui. São 12 de propósito: fecham a
+  grade 4x3 sem sobra — se adicionar ou remover um, ajuste para manter múltiplo
+  de 4, senão a última linha fica com buraco (já foi reclamado uma vez).
+- A **Home fica fora do `Layout`** (ver `src/App.tsx`): nela o usuário quer só os
+  quadradinhos, sem navegação lateral. As telas internas usam `Layout`, que traz
+  só um cabeçalho com voltar. Não reintroduza sidebar na Home.
+- `src/lib/useCollection.ts` é o CRUD genérico do Supabase que quase todos os
+  módulos usam. Módulo novo normalmente é: tabela no SQL + página usando esse hook.
+- `src/components/ui.tsx` tem as primitivas visuais (PageHeader, Card, Field,
+  EmptyState...). Use-as para os módulos ficarem consistentes.
 
-## Módulos
-- **Finanças**: único módulo com funcionalidade real hoje (Supabase). Dashboard,
-  lançamentos (receita/despesa, categoria, recorrência), categorias
-  (ícone/cor/orçamento mensal) e orçamento (gasto vs. limite por categoria).
-- Demais módulos: apenas placeholder ("Em desenvolvimento"), a implementar um
-  por vez conforme o usuário pedir.
+## Módulos (todos implementados)
+Hoje (resumo), Agenda, Finanças, Tarefas, Metas, Hábitos, Projetos, Estudos,
+Saúde, Notas, Assistente, Configurações.
 
-Fases futuras (não implementar ainda, só ter em mente na arquitetura):
-- Assistente de IA dentro do app, com nome/personalidade próprios, que edita dados
-  via chat (criar lançamento, editar categoria, etc).
-- Projeto separado, local, de controle do PC por gestos de mão via webcam
-  (mouse, cliques, atalhos) — não faz parte deste repositório/app.
+Finanças tem sub-navegação própria em `src/pages/finance/`; os demais são páginas
+únicas em `src/pages/modules/`.
 
-## Preferência de commits (confirmada pelo usuário em 2026-08-28)
-O usuário pediu commit + push automáticos a cada mudança feita neste repositório,
-sem precisar confirmar cada push individualmente. Sempre que arquivos forem
-criados/editados aqui, faça `git add`, `git commit` com uma mensagem descritiva
-e `git push` para o remoto `origin` sem pedir confirmação adicional.
+O usuário **removeu Visão e Diário** de propósito — não recrie.
+
+## Assistente de IA
+Bolha fixa no canto (`src/components/AssistantWidget.tsx`), presente em todas as
+telas, mais uma tela cheia em `src/pages/assistant/`. Ambas usam `src/lib/useChat.ts`.
+
+Os modelos têm codinomes de heróis, ordenados por capacidade (`src/lib/models.ts`):
+Capitão América (Opus) > Thor (Sonnet) > Hulk (Gemini Pro) > Homem de Ferro
+(Haiku) > Homem-Aranha (Gemini Flash). Cada um tem avatar animado próprio em
+`src/components/HeroAvatar.tsx` — insígnias **originais** (escudo, martelo, punho,
+reator, teia), não réplicas de personagens: o site é público e arte da Marvel é
+protegida por direitos autorais.
+
+`api/chat.ts` é uma função edge da Vercel que guarda as chaves dos provedores no
+servidor e **exige um token válido do Supabase**. As chaves nunca podem ir para o
+frontend — o site é público e qualquer um leria e gastaria os créditos.
 
 ## Backend
-Supabase URL e anon key ficam em `.env.local` (não commitado). O login pede
-só senha (sem campo de e-mail) — usa um e-mail fixo (`APP_EMAIL` em
-`src/lib/supabase.ts`) por baixo dos panos, autenticado via Supabase Auth.
+Supabase URL e anon key ficam em `.env.local` (ignorado pelo git) e nas
+Environment Variables da Vercel. Login pede só senha; o e-mail fixo está em
+`APP_EMAIL` (`src/lib/supabase.ts`).
+
+Schemas: `supabase/schema.sql` (finanças) e `supabase/schema-modules.sql`
+(demais). Rodar no SQL Editor do Supabase quando criar tabela nova.
+
+## Preferência de commits (confirmada em 2026-08-28)
+Commit + push automáticos a cada mudança, sem pedir confirmação. Remoto:
+https://github.com/JoshuaGuirado/JoshuaVision
+
+## Verificação
+O usuário não consegue avaliar código — **teste de verdade antes de dizer que
+funciona**. Rode `npx tsc -b --noEmit`, use o preview do navegador para conferir
+a tela, e valide chamadas ao Supabase/API com curl quando fizer sentido. Já houve
+caso de modelo de IA descontinuado que só apareceu porque foi testado de fato.

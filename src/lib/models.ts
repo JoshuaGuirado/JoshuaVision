@@ -14,8 +14,8 @@ export type AiModel = {
 }
 
 /**
- * O esquadrão do Joshua. Quanto mais forte o personagem, mais capaz o modelo:
- * o Capitão lidera, o Falcão vem logo atrás, e assim por diante.
+ * O esquadrão do Joshua. Quanto mais forte o herói, mais capaz o modelo —
+ * o Capitão lidera (é o tema da casa), e os outros vêm por ordem de poder.
  */
 const SQUAD: AiModel[] = [
   {
@@ -29,38 +29,38 @@ const SQUAD: AiModel[] = [
   },
   {
     id: 'claude-sonnet-5',
-    label: 'Falcão',
+    label: 'Thor',
     realName: 'Claude Sonnet',
     provider: 'anthropic',
-    hint: 'Ágil e completo — o braço direito',
-    color: '#2f6df0',
+    hint: 'Poder bruto com precisão',
+    color: '#6db3f2',
     rank: 2,
   },
   {
     id: 'gemini-3.1-pro-preview',
-    label: 'Viúva Negra',
+    label: 'Hulk',
     realName: 'Gemini Pro',
     provider: 'google',
-    hint: 'Estrategista — gratuito e capaz',
-    color: '#a8bbdd',
+    hint: 'Força imbatível — e gratuito',
+    color: '#4caf50',
     rank: 3,
   },
   {
     id: 'claude-haiku-4-5',
-    label: 'Soldado Invernal',
+    label: 'Homem de Ferro',
     realName: 'Claude Haiku',
     provider: 'anthropic',
-    hint: 'Rápido e direto ao ponto',
-    color: '#7f93bb',
+    hint: 'Tecnologia rápida e afiada',
+    color: '#f0a92c',
     rank: 4,
   },
   {
     id: 'gemini-3.7-flash',
-    label: 'Agente 13',
+    label: 'Homem-Aranha',
     realName: 'Gemini Flash',
     provider: 'google',
-    hint: 'O mais veloz — gratuito',
-    color: '#5b93ff',
+    hint: 'O mais ágil — gratuito',
+    color: '#e34a4a',
     rank: 5,
   },
 ]
@@ -68,7 +68,7 @@ const SQUAD: AiModel[] = [
 /** Ordenado por patente: o mais poderoso encabeça a lista. */
 export const AI_MODELS: AiModel[] = [...SQUAD].sort((a, b) => a.rank - b.rank)
 
-/** Agente 13 é o padrão por ser gratuito — trocar quando houver crédito na Anthropic. */
+/** Homem-Aranha é o padrão por ser gratuito — trocar quando houver crédito na Anthropic. */
 export const DEFAULT_MODEL_ID = 'gemini-3.7-flash'
 
 export function findModel(id: string): AiModel | undefined {

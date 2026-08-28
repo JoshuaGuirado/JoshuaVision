@@ -2,16 +2,20 @@ import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { NAV_ITEMS, SETTINGS_ITEM } from '../lib/nav'
+import { LogoMark } from './Logo'
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      <header className="md:hidden flex items-center justify-between px-4 py-4 border-b border-border">
-        <p className="text-sm font-extrabold tracking-[0.2em]">
-          THE JOSHUA <span className="text-accent">VISION</span>
-        </p>
+      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <LogoMark size={30} />
+          <p className="text-[11px] font-extrabold tracking-[0.18em] truncate">
+            THE JOSHUA <span className="text-accent">VISION</span>
+          </p>
+        </div>
         <button onClick={() => setOpen(true)} aria-label="Abrir menu" className="text-text-dim">
           <Menu size={22} />
         </button>

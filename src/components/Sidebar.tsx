@@ -1,11 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import { NAV_ITEMS, SETTINGS_ITEM } from '../lib/nav'
+import { LogoMark } from './Logo'
 
 export default function Sidebar() {
   return (
     <aside className="hidden md:flex md:w-64 md:flex-col md:shrink-0 border-r border-border bg-surface/40">
-      <div className="px-6 py-6">
-        <p className="text-sm font-extrabold tracking-[0.25em] leading-tight">
+      <div className="px-5 py-6 flex items-center gap-3">
+        <LogoMark size={34} />
+        <p className="text-[11px] font-extrabold tracking-[0.2em] leading-tight">
           THE JOSHUA
           <br />
           <span className="text-accent">VISION</span>

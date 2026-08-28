@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { LogoFull } from '../components/Logo'
 
 export default function Login() {
   const { signIn } = useAuth()
@@ -19,12 +20,9 @@ export default function Login() {
   return (
     <div className="min-h-svh flex items-center justify-center bg-bg px-6">
       <div className="w-full max-w-xs">
-        <p className="text-center text-sm font-extrabold tracking-[0.3em] mb-2">
-          THE JOSHUA
-          <br />
-          <span className="text-accent">VISION</span>
-        </p>
-        <p className="text-center text-text-dim text-xs italic mb-10">Your life. Your vision.</p>
+        <div className="mb-12">
+          <LogoFull />
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

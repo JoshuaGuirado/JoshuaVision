@@ -1,16 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0a0a0a;
-  --color-surface: #141414;
-  --color-surface-2: #1c1c1c;
-  --color-border: #2a2a2a;
-  --color-accent: #f5c518;
-  --color-accent-dim: #7a6209;
-  --color-text: #f2f2f2;
-  --color-text-dim: #9a9a9a;
-  --color-danger: #ef4444;
-  --color-success: #22c55e;
+  /* Base — pretos com um leve azul frio, evita o cinza chapado */
+  --color-bg: #060607;
+  --color-surface: #0f1011;
+  --color-surface-2: #17181a;
+  --color-surface-3: #1f2124;
+  --color-border: #232528;
+  --color-border-soft: #1a1c1f;
+
+  /* Dourado da logo, não amarelo puro */
+  --color-accent: #d4a53c;
+  --color-accent-light: #f7dfa0;
+  --color-accent-deep: #a97c1d;
+
+  --color-text: #f0f0f1;
+  --color-text-dim: #8b8d92;
+  --color-text-faint: #5c5e63;
+
+  --color-danger: #e5484d;
+  --color-success: #46a758;
+  --color-info: #5b8def;
 
   --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
 }
@@ -25,10 +36,26 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
+}
+
+/* Brilho quente no topo — dá profundidade sem competir com o conteúdo */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(70rem 40rem at 50% -18%, rgba(212, 165, 60, 0.07), transparent 70%),
+    radial-gradient(50rem 30rem at 100% 0%, rgba(91, 141, 239, 0.04), transparent 65%);
+  z-index: 0;
 }
 
 #root {
   min-height: 100svh;
+  position: relative;
+  z-index: 1;
 }
 
 * {
@@ -39,7 +66,29 @@ body {
   width: 8px;
   height: 8px;
 }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--color-surface-3);
   border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border);
+}
+
+@keyframes tjv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Entrada escalonada dos cards da Home */
+.tjv-rise {
+  animation: tjv-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }

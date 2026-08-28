@@ -25,3 +25,17 @@ padrao de nome (ex: thor-4.jpg) e me peca para incluir na lista.
 
 Se um arquivo faltar, o site mostra o emblema desenhado no lugar.
 Nada quebra.
+
+LOGOS DOS HEROIS
+================
+
+Os arquivos logo*.jpg desta pasta sao os ORIGINAIS, do jeito que voce salvou
+(com fundo branco, preto ou xadrez).
+
+O comando abaixo tira o fundo deles e gera os PNGs que o site usa,
+em public/logos/:
+
+    node scripts/logos-transparentes.mjs
+
+Se voce trocar alguma logo, salve com o mesmo nome (ex: logothor-1.jpg),
+rode o comando e a nova aparece no site.

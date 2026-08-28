@@ -1,3 +1,5 @@
+import { useLocation } from 'react-router-dom'
+
 /**
  * A VOZ DOS HERÓIS
  *
@@ -20,6 +22,10 @@ export type HeroVoice = {
   greeting: string
   /** Falas seguintes — o Joshua clica no balão para ouvir outra. */
   lines: string[]
+  /** Texto da tela vazia, na voz do herói. */
+  empty: string
+  /** Rótulo do botão de criar, na voz do herói. */
+  action: string
 }
 
 export const HERO_VOICES: Record<string, HeroVoice> = {
@@ -30,6 +36,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
       '/herois/avengerjuntos-2.jpg',
       '/herois/avengerjuntos-3.jpg',
     ],
+    empty: 'Nada pendente. Dia limpo — aproveite antes que apareça missão.',
+    action: 'Reunir',
     greeting: 'Vingadores reunidos, Joshua. Este é o painel do seu dia — a gente cobre o resto.',
     lines: [
       'Um dia de cada vez. Hoje a missão é só esta aqui.',
@@ -45,6 +53,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
       '/herois/doutorestranho-2.jpg',
       '/herois/doutorestranho-3.jpg',
     ],
+    empty: 'A linha do tempo está vazia. Marque o primeiro compromisso.',
+    action: 'Abrir portal',
     greeting: 'Olá, Joshua. Doutor Estranho. Eu cuido do tempo — e o seu está todo aqui.',
     lines: [
       'Vi catorze milhões de agendas possíveis. Nesta você chega no horário.',
@@ -62,6 +72,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
       '/herois/capitao-4.jpg',
       '/herois/capitao-5.jpg',
     ],
+    empty: 'Nenhum lançamento ainda. Anote o primeiro e assuma o comando.',
+    action: 'Registrar',
     greeting: 'Olá, Joshua. Capitão América falando. Vamos controlar suas finanças.',
     lines: [
       'Disciplina não é castigo, é escudo. Todo mês ele te protege um pouco mais.',
@@ -77,6 +89,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
       '/herois/homemdeferro-2.jpg',
       '/herois/homemdeferro-3.jpg',
     ],
+    empty: 'Lista zerada. Até eu preciso de um plano — adicione a primeira.',
+    action: 'Executar',
     greeting: 'E aí, Joshua. Tony Stark. Sua lista de tarefas — vamos executar isso com estilo.',
     lines: [
       'Gênio, bilionário, playboy, filantropo. E organizado. Principalmente organizado.',
@@ -92,6 +106,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
       '/herois/homemaranha-2.jpg',
       '/herois/homemaranha-3.jpg',
     ],
+    empty: 'Nenhuma meta ainda. Escolha um prédio e mire no topo.',
+    action: 'Lançar teia',
     greeting: 'Oi, Joshua! Peter Parker aqui. Bora mirar longe? Estas são as suas metas.',
     lines: [
       'Com grandes metas vêm grandes responsabilidades. Mas a gente dá conta.',
@@ -103,6 +119,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
   '/habitos': {
     name: 'Thor',
     portraits: ['/herois/thor-1.jpg', '/herois/thor-2.jpg', '/herois/thor-3.jpg'],
+    empty: 'Nenhum hábito forjado ainda. Erga o primeiro.',
+    action: 'Forjar',
     greeting: 'Saudações, Joshua! Thor, filho de Odin. Aqui forjamos os seus hábitos.',
     lines: [
       'O martelo só obedece a quem é digno. A constância é o que te torna digno.',
@@ -118,6 +136,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
       '/herois/panteranegra-2.jpg',
       '/herois/panteranegra-3.jpg',
     ],
+    empty: 'Wakanda não nasceu pronta. Comece o primeiro projeto.',
+    action: 'Fundar',
     greeting:
       'Bem-vindo, Joshua. Aqui é o Pantera Negra. Todo grande projeto se constrói como Wakanda: com paciência.',
     lines: [
@@ -130,6 +150,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
   '/estudos': {
     name: 'Bruce Banner',
     portraits: ['/herois/hulk-1.jpg', '/herois/hulk-2.jpg', '/herois/hulk-3.jpg'],
+    empty: 'Nenhuma matéria ainda. Conhecimento se acumula — comece por uma.',
+    action: 'Estudar',
     greeting: 'Oi, Joshua. Bruce Banner. Conhecimento é a força que eu escolhi controlar.',
     lines: [
       'Meu segredo? Eu estudo sempre. É assim que eu não perco o controle.',
@@ -145,6 +167,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
       '/herois/guardioesdagalaxia-2.jpg',
       '/herois/guardioesdagalaxia-3.jpg',
     ],
+    empty: 'Nada registrado hoje. Corpo em dia, missão em dia.',
+    action: 'Registrar',
     greeting: 'Fala, Joshua! Guardiões na área. Corpo em dia, missão em dia — é essa a regra.',
     lines: [
       'Eu sou Groot. (Ele disse: bebe água.)',
@@ -156,6 +180,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
   '/notas': {
     name: 'Visão',
     portraits: ['/herois/visao-1.jpg', '/herois/visao-2.jpg', '/herois/visao-3.jpg'],
+    empty: 'Nenhuma nota ainda. Escreva — eu guardo para sempre.',
+    action: 'Guardar',
     greeting: 'Olá, Joshua. Sou a Visão. Aquilo que você anota aqui, eu guardo por você.',
     lines: [
       'A memória humana é frágil e bela. A minha é apenas confiável.',
@@ -167,6 +193,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
   '/assistente': {
     name: 'F.R.I.D.A.Y.',
     portraits: ['/herois/friday-1.jpg'],
+    empty: 'Sem conversas ainda. Chame um herói do esquadrão.',
+    action: 'Chamar',
     greeting: 'Olá, chefe. F.R.I.D.A.Y. online. Seu esquadrão de IA está pronto.',
     lines: [
       'Escolha um herói do esquadrão e me diga o que precisa.',
@@ -178,6 +206,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
   '/configuracoes': {
     name: 'Quarteto Fantástico',
     portraits: ['/herois/quarteto-1.jpg', '/herois/quarteto-2.jpg', '/herois/quarteto-3.jpg'],
+    empty: 'Nada para ajustar por aqui ainda.',
+    action: 'Ajustar',
     greeting: 'Olá, Joshua. Quarteto Fantástico. É aqui que a gente ajusta a máquina toda.',
     lines: [
       'Tudo pode ser melhorado. Inclusive as configurações.',
@@ -190,4 +220,19 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
 
 export function heroVoiceFor(path: string): HeroVoice | undefined {
   return HERO_VOICES[path]
+}
+
+/**
+ * Voz do herói da tela em que o Joshua está agora.
+ *
+ * Serve para as primitivas de `ui.tsx` falarem como o herói sem cada página
+ * precisar repassar isso. Fora dos módulos (Home, login) devolve `undefined`
+ * e os componentes usam o texto neutro.
+ */
+export function useHeroVoice(): HeroVoice | undefined {
+  const { pathname } = useLocation()
+  const key = Object.keys(HERO_VOICES).find(
+    (p) => pathname === p || pathname.startsWith(p + '/'),
+  )
+  return key ? HERO_VOICES[key] : undefined
 }

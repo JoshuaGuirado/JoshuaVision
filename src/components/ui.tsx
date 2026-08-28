@@ -1,6 +1,7 @@
 import type { ReactNode, InputHTMLAttributes, TextareaHTMLAttributes } from 'react'
 import { Plus, Inbox } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useHeroVoice } from '../lib/heroVoice'
 
 export function PageHeader({
   title,
@@ -22,14 +23,22 @@ export function PageHeader({
   )
 }
 
-export function AddButton({ onClick, label = 'Novo' }: { onClick: () => void; label?: string }) {
+/**
+ * Botão de criar. Dentro de um módulo ele fala como o herói ("Forjar" com o
+ * Thor, "Lançar teia" com o Aranha); fora, continua sendo "Novo".
+ * Um `label` explícito sempre ganha.
+ */
+export function AddButton({ onClick, label }: { onClick: () => void; label?: string }) {
+  const voice = useHeroVoice()
+  const texto = label ?? voice?.action ?? 'Novo'
+
   return (
     <button
       onClick={onClick}
       className="flex items-center gap-1.5 text-sm font-semibold bg-accent text-black
                  rounded-xl px-3.5 py-2.5 hover:bg-accent-light transition-colors shrink-0"
     >
-      <Plus size={16} strokeWidth={2.5} /> {label}
+      <Plus size={16} strokeWidth={2.5} /> {texto}
     </button>
   )
 }
@@ -51,6 +60,10 @@ export function Card({
   )
 }
 
+/**
+ * Tela vazia. Dentro de um módulo quem avisa é o herói, com a frase dele;
+ * `message` é a versão neutra usada fora dos módulos.
+ */
 export function EmptyState({
   icon: Icon = Inbox,
   message,
@@ -58,12 +71,20 @@ export function EmptyState({
   icon?: LucideIcon
   message: string
 }) {
+  const voice = useHeroVoice()
+  const texto = voice?.empty ?? message
+
   return (
     <div className="border border-dashed border-border rounded-2xl py-14 flex flex-col items-center gap-3 text-center">
       <div className="w-11 h-11 rounded-full bg-surface-2 flex items-center justify-center text-text-faint">
         <Icon size={20} strokeWidth={1.5} />
       </div>
-      <p className="text-text-dim text-sm max-w-[16rem]">{message}</p>
+      <p className="text-text-dim text-sm max-w-[18rem]">{texto}</p>
+      {voice && (
+        <p className="text-[10px] uppercase tracking-[0.18em]" style={{ opacity: 0.55 }}>
+          {voice.name}
+        </p>
+      )}
     </div>
   )
 }

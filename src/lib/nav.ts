@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 import {
   Sun,
@@ -181,4 +182,13 @@ export const MODULES: NavItem[] = [
 
 export function findModule(pathname: string): NavItem | undefined {
   return MODULES.find((m) => pathname === m.path || pathname.startsWith(m.path + '/'))
+}
+
+/**
+ * Cor do herói da tela atual. Serve para efeitos que acontecem longe da
+ * página (o estouro de quadrinho, por exemplo) saírem na cor certa.
+ */
+export function useHeroColor(): string {
+  const { pathname } = useLocation()
+  return findModule(pathname)?.color ?? '#ec1d24'
 }

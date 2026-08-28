@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { EmblemId } from './HeroEmblem'
 import HeroLogo from './HeroLogo'
 import type { HeroVoice } from '../lib/heroVoice'
+import { useFx } from '../lib/fx'
 
 /**
  * O HERÓI FALANDO COM O JOSHUA.
@@ -21,6 +22,8 @@ export default function HeroSpeech({
   emblem,
   color,
   invertLogo,
+  falaDoDia,
+  ponteiro = { x: 0, y: 0 },
 }: {
   voice: HeroVoice
   portrait: string
@@ -28,14 +31,24 @@ export default function HeroSpeech({
   emblem: EmblemId
   color: string
   invertLogo?: boolean
+  /** Comentário sobre os números reais do Joshua; entra na frente da saudação. */
+  falaDoDia?: string
+  /** Posição do ponteiro, para o herói se inclinar junto. */
+  ponteiro?: { x: number; y: number }
 }) {
+  const fx = useFx()
   // Guarda QUAL arte falhou, em vez de um booleano: trocar de imagem volta a
   // tentar carregar em vez de herdar a falha anterior.
   const [failed, setFailed] = useState<string | null>(null)
   const showArt = failed !== portrait
 
-  // A saudação é sempre a primeira; as outras entram quando o Joshua clica.
-  const script = useMemo(() => [voice.greeting, ...voice.lines], [voice])
+  // A primeira fala é o comentário sobre os dados de hoje, quando existe —
+  // é o que faz o herói parecer que está mesmo olhando a vida do Joshua.
+  // Sem dados interessantes, ele abre com a saudação de sempre.
+  const script = useMemo(
+    () => (falaDoDia ? [falaDoDia, voice.greeting, ...voice.lines] : [voice.greeting, ...voice.lines]),
+    [voice, falaDoDia],
+  )
   const [index, setIndex] = useState(0)
   const full = script[index] ?? voice.greeting
 
@@ -53,6 +66,8 @@ export default function HeroSpeech({
       setTyped(full.slice(0, i))
       if (i >= full.length) window.clearInterval(timer.current)
     }, 26)
+    // Se a voz estiver ligada, ele fala junto com o texto aparecendo.
+    fx.speak(full)
     return () => window.clearInterval(timer.current)
   }, [full])
 
@@ -74,7 +89,14 @@ export default function HeroSpeech({
            tela" é a arte grande e transparente ao fundo, no Layout. */}
       <div
         className="relative shrink-0 w-28 sm:w-44 aspect-[3/4] overflow-hidden rounded-2xl border"
-        style={{ borderColor: `${color}66`, boxShadow: `0 14px 34px -12px ${color}80` }}
+        style={{
+          borderColor: `${color}66`,
+          boxShadow: `0 14px 34px -12px ${color}80`,
+          // camada da frente: anda mais que o fundo, e inclina de leve. É esse
+          // descompasso entre as duas que o olho lê como profundidade.
+          transform: `perspective(700px) translate3d(${ponteiro.x * 10}px, ${ponteiro.y * 7}px, 0) rotateY(${ponteiro.x * -7}deg) rotateX(${ponteiro.y * 5}deg)`,
+          transformStyle: 'preserve-3d',
+        }}
       >
         {showArt ? (
           <img

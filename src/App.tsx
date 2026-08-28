@@ -1,11 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { FxProvider } from './lib/fx'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import SetupNeeded from './pages/SetupNeeded'
 import Home from './pages/Home'
 import Settings from './pages/Settings'
 import AssistantWidget from './components/AssistantWidget'
+import QuickAdd from './components/QuickAdd'
 import Today from './pages/modules/Today'
 import Agenda from './pages/modules/Agenda'
 import Tasks from './pages/modules/Tasks'
@@ -64,7 +66,8 @@ function AppRoutes() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {/* Bolha de suporte — acompanha o Joshua em todas as telas. */}
+      {/* Bolha de suporte e atalho de criar — acompanham o Joshua em todas as telas. */}
+      <QuickAdd />
       <AssistantWidget />
     </>
   )
@@ -76,7 +79,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        {/* Efeitos (estouros, som, voz) precisam do Router por dentro: eles
+            olham em que módulo o Joshua está para saber a cor e a fala. */}
+        <FxProvider>
+          <AppRoutes />
+        </FxProvider>
       </AuthProvider>
     </BrowserRouter>
   )

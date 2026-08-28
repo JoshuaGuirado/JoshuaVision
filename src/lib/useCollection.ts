@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { useFx } from './fx'
+import { useHeroVoice } from './heroVoice'
+import { useHeroColor } from './nav'
 
 type Order = { column: string; ascending?: boolean }
 
@@ -14,6 +17,12 @@ export function useCollection<T extends { id: string }>(table: string, order: Or
   const [items, setItems] = useState<T[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Criar algo estoura a onomatopeia do herói do módulo. Fica aqui, e não em
+  // cada página, para os doze módulos ganharem o efeito de uma vez.
+  const fx = useFx()
+  const voice = useHeroVoice()
+  const cor = useHeroColor()
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -43,16 +52,24 @@ export function useCollection<T extends { id: string }>(table: string, order: Or
 
   async function create(values: Record<string, unknown>) {
     const { data: userData } = await supabase.auth.getUser()
+    // Sessão expirada: sem esta checagem o app quebrava com "Cannot read
+    // properties of null" ao salvar, sem dizer nada ao Joshua.
+    if (!userData.user) throw new Error('Sua sessão expirou. Entre de novo para salvar.')
+
     const { error: err } = await supabase
       .from(table)
-      .insert({ ...values, user_id: userData.user!.id })
+      .insert({ ...values, user_id: userData.user.id })
     if (err) throw err
+    if (voice) fx.bang(voice.bang, cor, voice.bangKind)
     await load()
   }
 
   async function update(id: string, values: Record<string, unknown>) {
     const { error: err } = await supabase.from(table).update(values).eq('id', id)
     if (err) throw err
+    // Concluir também merece estouro; desmarcar, não.
+    const concluiu = values.done === true || values.completed === true
+    if (concluiu && voice) fx.bang(voice.bang, cor, voice.bangKind)
     await load()
   }
 

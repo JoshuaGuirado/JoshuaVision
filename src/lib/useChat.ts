@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from './supabase'
+import { useFx } from './fx'
 
 export type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
@@ -11,6 +12,7 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { avisarMudanca } = useFx()
 
   async function send(text: string, modelId: string) {
     const history: ChatMessage[] = [...messages, { role: 'user', content: text }]
@@ -34,6 +36,10 @@ export function useChat() {
         throw new Error(detail?.error ?? `Falha na resposta (${res.status})`)
       }
 
+      // O servidor avisa quando o assistente gravou algo (criou tarefa, lançou
+      // despesa...). As telas abertas escutam para se atualizarem sozinhas.
+      const alterouDados = res.headers.get('x-dados-alterados') === '1'
+
       setMessages([...history, { role: 'assistant', content: '' }])
 
       const reader = res.body.getReader()
@@ -46,6 +52,8 @@ export function useChat() {
         acc += decoder.decode(value, { stream: true })
         setMessages([...history, { role: 'assistant', content: acc }])
       }
+
+      if (alterouDados) avisarMudanca()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Algo deu errado.')
       setMessages(history)

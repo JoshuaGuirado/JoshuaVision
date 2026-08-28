@@ -55,8 +55,8 @@ export const HERO_VOICES: Record<string, HeroVoice> = {
   },
   '/financas': {
     name: 'Capitão América',
+    // capitao-1.jpg saiu da lista: o Joshua não gostou dessa arte.
     portraits: [
-      '/herois/capitao-1.jpg',
       '/herois/capitao-2.jpg',
       '/herois/capitao-3.jpg',
       '/herois/capitao-4.jpg',

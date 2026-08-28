@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { MODULES } from '../lib/nav'
+import { heroVoiceFor } from '../lib/heroVoice'
 import { LogoMark } from '../components/Logo'
-import HeroEmblem from '../components/HeroEmblem'
+import HeroLogo from '../components/HeroLogo'
 import { useAuth } from '../contexts/AuthContext'
 
 function greeting() {
@@ -55,7 +56,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-          {MODULES.map(({ path, label, hero, emblem, description, color }, i) => (
+          {MODULES.map(({ path, label, hero, emblem, logo, invertLogo, description, color }, i) => (
             <Link
               key={path}
               to={path}
@@ -66,15 +67,39 @@ export default function Home() {
                          hover:-translate-y-1 aspect-[4/3] sm:aspect-square lg:aspect-[4/3]
                          flex flex-col justify-between"
             >
+              {/* o próprio herói no cartão: discreto em repouso, aparece no hover */}
+              {heroVoiceFor(path)?.portraits[0] && (
+                <img
+                  aria-hidden
+                  src={heroVoiceFor(path)!.portraits[0]}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover object-[center_18%]
+                             opacity-[0.22] group-hover:opacity-40 group-hover:scale-105
+                             transition-all duration-500"
+                  style={{
+                    maskImage: 'linear-gradient(to top, transparent 12%, black 88%)',
+                    WebkitMaskImage: 'linear-gradient(to top, transparent 12%, black 88%)',
+                  }}
+                />
+              )}
+              {/* escurece a arte para o nome do módulo continuar legível */}
+              <span
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(180deg, rgba(8,9,12,0.35) 0%, rgba(8,9,12,0.62) 55%, rgba(8,9,12,0.92) 100%)',
+                }}
+              />
               {/* halo do módulo — discreto em repouso, acende no hover */}
               <span
                 aria-hidden
-                className="absolute inset-0 opacity-[0.09] group-hover:opacity-[0.22] transition-opacity duration-300"
+                className="absolute inset-0 opacity-[0.12] group-hover:opacity-[0.28] transition-opacity duration-300"
                 style={{
                   background: `radial-gradient(18rem 12rem at 100% 0%, ${color}, transparent 70%)`,
                 }}
               />
-              {/* linha superior que desliza no hover, como a listra do escudo */}
+              {/* linha superior que desliza no hover, na cor do herói */}
               <span
                 aria-hidden
                 className="absolute top-0 left-0 h-[2px] w-0 group-hover:w-full transition-all duration-500"
@@ -83,7 +108,13 @@ export default function Home() {
 
               <div className="relative">
                 <span className="inline-block transition-transform duration-300 group-hover:scale-110">
-                  <HeroEmblem emblem={emblem} size={44} alive />
+                  <HeroLogo
+                    logo={logo}
+                    emblem={emblem}
+                    color={color}
+                    invert={invertLogo}
+                    size={46}
+                  />
                 </span>
               </div>
 

@@ -2,34 +2,37 @@
 @import "tailwindcss";
 
 /**
- * Paleta Capitão América: azul-marinho profundo como base, vermelho do escudo
- * como cor de ação, branco/prata para os destaques.
+ * Paleta MARVEL — não é mais a do Capitão América.
+ *
+ * A identidade da Marvel é preto/carvão como base, o vermelho da tarja como
+ * cor de ação e prata nos detalhes. O azul-marinho e o azul do escudo saíram
+ * daqui: cada herói traz a própria cor nos módulos (ver `src/lib/nav.ts`).
  */
 @theme {
-  --color-bg: #060d1c;
-  --color-surface: #0d1830;
-  --color-surface-2: #14203c;
-  --color-surface-3: #1c2b4d;
-  --color-border: #24365c;
-  --color-border-soft: #172642;
+  --color-bg: #08090c;
+  --color-surface: #121319;
+  --color-surface-2: #191b22;
+  --color-surface-3: #23262f;
+  --color-border: #32363f;
+  --color-border-soft: #23262e;
 
-  /* Vermelho do escudo — ações e destaque principal */
-  --color-accent: #e0263c;
-  --color-accent-light: #ff4b5e;
-  --color-accent-deep: #a3122a;
+  /* Vermelho Marvel — ações e destaque principal */
+  --color-accent: #ec1d24;
+  --color-accent-light: #ff4a52;
+  --color-accent-deep: #9e0e14;
 
-  /* Azul heroico — identidade e superfícies vivas */
-  --color-cap: #2f6df0;
-  --color-cap-light: #5b93ff;
-  --color-cap-deep: #16367f;
+  /* Prata — o metal dos títulos e das molduras */
+  --color-cap: #aab3c4;
+  --color-cap-light: #dfe5f0;
+  --color-cap-deep: #6c7486;
 
-  --color-star: #f2f5fb;
+  --color-star: #f4f5f8;
 
-  --color-text: #eef2f9;
-  --color-text-dim: #8b9ac0;
-  --color-text-faint: #5b6a90;
+  --color-text: #f0f1f5;
+  --color-text-dim: #98a0af;
+  --color-text-faint: #6b7280;
 
-  --color-danger: #e0263c;
+  --color-danger: #ec1d24;
   --color-success: #35b57a;
 
   --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -49,15 +52,16 @@ body {
   letter-spacing: -0.011em;
 }
 
-/* Luz azul e vermelha ao fundo — o escudo iluminando a tela */
+/* Brasa vermelha ao fundo, como a tarja da Marvel acendendo a tela */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(60rem 34rem at 15% -10%, rgba(47, 109, 240, 0.16), transparent 68%),
-    radial-gradient(48rem 30rem at 92% 4%, rgba(224, 38, 60, 0.11), transparent 66%);
+    radial-gradient(56rem 32rem at 12% -8%, rgba(236, 29, 36, 0.14), transparent 66%),
+    radial-gradient(44rem 28rem at 94% 2%, rgba(236, 29, 36, 0.08), transparent 64%),
+    radial-gradient(70rem 40rem at 50% 108%, rgba(170, 179, 196, 0.06), transparent 70%);
   z-index: 0;
 }
 
@@ -123,10 +127,10 @@ body::before {
 @keyframes tjv-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(224, 38, 60, 0.45);
+    box-shadow: 0 0 0 0 rgba(236, 29, 36, 0.5);
   }
   70% {
-    box-shadow: 0 0 0 14px rgba(224, 38, 60, 0);
+    box-shadow: 0 0 0 14px rgba(236, 29, 36, 0);
   }
 }
 
@@ -377,6 +381,66 @@ body::before {
   .tjv-ping,
   .tjv-wave rect,
   .tjv-bubble circle {
+    animation: none;
+  }
+}
+
+/* ---------- efeitos das logos oficiais dos heróis ---------- */
+
+/* halo colorido respirando atrás da logo */
+@keyframes tjv-halo {
+  0%,
+  100% {
+    transform: scale(0.86);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 0.9;
+  }
+}
+.tjv-halo {
+  animation: tjv-halo 3.4s ease-in-out infinite;
+}
+
+/* flutuação leve, como se a insígnia pairasse */
+@keyframes tjv-hover {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-1.4deg);
+  }
+}
+.tjv-hover {
+  animation: tjv-hover 4.6s ease-in-out infinite;
+}
+
+/* o cartão do módulo acorda a logo quando o Joshua passa o mouse */
+.group:hover .tjv-hover {
+  animation-duration: 1.6s;
+}
+
+/* arte do herói entrando devagar.
+   Só mexe no transform: quem define a transparência final é a classe do
+   elemento — animar opacity aqui apagava a transparência do fundo. */
+@keyframes tjv-arrive {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.tjv-arrive {
+  animation: tjv-arrive 1.1s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tjv-halo,
+  .tjv-hover,
+  .tjv-arrive {
     animation: none;
   }
 }

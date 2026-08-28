@@ -1,21 +1,16 @@
+import { useState } from 'react'
+
 /**
- * Identidade do THE JOSHUA VISION — tema Capitão América.
+ * IDENTIDADE DO THE JOSHUA VISION — tema Marvel.
  *
- * O símbolo é o escudo: anéis vermelho/branco concêntricos, campo azul e a
- * estrela de cinco pontas no centro. Feito em SVG para escalar sem perder
- * nitidez e permitir variações sem exportar imagem nova.
+ * O símbolo do site não é mais o escudo do Capitão América: o site inteiro é
+ * Marvel, e um herói só não pode representar todos. A marca agora é o "A" dos
+ * Vingadores (arte que o Joshua escolheu, em `public/logos/avenger.png`),
+ * dentro de um anel vermelho Marvel que gira devagar.
+ *
+ * Se o PNG faltar, o anel continua e aparece um "A" desenhado no lugar — a
+ * marca nunca some.
  */
-
-/** Estrela de 5 pontas centrada em (cx, cy) com raio externo r. */
-function starPoints(cx: number, cy: number, r: number) {
-  const inner = r * 0.382 // proporção clássica da estrela de 5 pontas
-  return Array.from({ length: 10 }, (_, i) => {
-    const radius = i % 2 === 0 ? r : inner
-    const angle = (Math.PI / 5) * i - Math.PI / 2
-    return `${cx + radius * Math.cos(angle)},${cy + radius * Math.sin(angle)}`
-  }).join(' ')
-}
-
 export function LogoMark({
   size = 48,
   className,
@@ -25,42 +20,63 @@ export function LogoMark({
   className?: string
   animated?: boolean
 }) {
+  const [failed, setFailed] = useState(false)
+
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 200 200"
-      className={className}
+    <span
+      className={`relative inline-flex items-center justify-center ${className ?? ''}`}
+      style={{ width: size, height: size }}
       role="img"
       aria-label="THE JOSHUA VISION"
     >
-      <defs>
-        <radialGradient id="tjv-shine" cx="32%" cy="26%" r="78%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
-          <stop offset="55%" stopColor="#ffffff" stopOpacity="0.06" />
-          <stop offset="100%" stopColor="#000000" stopOpacity="0.22" />
-        </radialGradient>
-      </defs>
-
-      {/* anéis do escudo, de fora para dentro */}
-      <circle cx="100" cy="100" r="96" fill="#c8102e" />
-      <circle cx="100" cy="100" r="76" fill="#f2f5fb" />
-      <circle cx="100" cy="100" r="57" fill="#c8102e" />
-      <circle cx="100" cy="100" r="38" fill="#1b4fb5" />
-
-      <polygon points={starPoints(100, 100, 30)} fill="#f2f5fb" />
-
-      {/* brilho metálico por cima */}
-      <circle
-        cx="100"
-        cy="100"
-        r="96"
-        fill="url(#tjv-shine)"
-        className={animated ? 'tjv-spin-slow' : undefined}
-        style={{ transformOrigin: '100px 100px' }}
+      {/* brasa vermelha respirando atrás da marca */}
+      <span
+        aria-hidden
+        className={`absolute inset-0 rounded-full ${animated ? 'tjv-halo' : ''}`}
+        style={{
+          background: 'radial-gradient(circle, rgba(236,29,36,0.55), rgba(236,29,36,0) 70%)',
+        }}
       />
-      <circle cx="100" cy="100" r="95" fill="none" stroke="#00000055" strokeWidth="2" />
-    </svg>
+
+      {/* anel metálico girando, como o disco de abertura da Marvel */}
+      <svg
+        viewBox="0 0 100 100"
+        className={`absolute inset-0 h-full w-full ${animated ? 'tjv-spin-slow' : ''}`}
+        aria-hidden
+      >
+        <circle
+          cx="50"
+          cy="50"
+          r="46"
+          fill="none"
+          stroke="#ec1d24"
+          strokeWidth="4"
+          strokeDasharray="52 16 22 16"
+          strokeLinecap="round"
+        />
+      </svg>
+
+      {failed ? (
+        <span
+          className="relative font-black leading-none text-accent"
+          style={{ fontSize: size * 0.56 }}
+        >
+          A
+        </span>
+      ) : (
+        <img
+          src="/logos/avenger.png"
+          alt=""
+          onError={() => setFailed(true)}
+          className="relative object-contain"
+          style={{
+            width: size * 0.66,
+            height: size * 0.66,
+            filter: 'drop-shadow(0 0 5px rgba(236,29,36,0.75)) brightness(1.35)',
+          }}
+        />
+      )}
+    </span>
   )
 }
 

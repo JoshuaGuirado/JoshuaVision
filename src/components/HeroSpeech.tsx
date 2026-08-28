@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import HeroEmblem, { type EmblemId } from './HeroEmblem'
+import type { EmblemId } from './HeroEmblem'
+import HeroLogo from './HeroLogo'
 import type { HeroVoice } from '../lib/heroVoice'
 
 /**
@@ -9,29 +10,29 @@ import type { HeroVoice } from '../lib/heroVoice'
  * letra por letra, como se ele estivesse falando na hora. Clicar no balão pede
  * a próxima fala.
  *
- * Se a arte não carregar (arquivo removido, nome errado), o retrato vira o
- * emblema desenhado: a tela nunca fica quebrada nem vazia.
+ * A arte vem pronta do `Layout`, para o herói do balão ser exatamente o mesmo
+ * que está ao fundo da tela. Se a imagem não carregar, sobra a logo oficial
+ * dele — a tela nunca fica quebrada nem vazia.
  */
 export default function HeroSpeech({
   voice,
+  portrait,
+  logo,
   emblem,
   color,
+  invertLogo,
 }: {
   voice: HeroVoice
+  portrait: string
+  logo: string
   emblem: EmblemId
   color: string
+  invertLogo?: boolean
 }) {
-  // Sorteia a arte uma vez por montagem: cada visita ao módulo traz uma foto
-  // diferente do herói, sem trocar sozinha enquanto o Joshua está lendo.
-  const portrait = useMemo(
-    () => voice.portraits[Math.floor(Math.random() * voice.portraits.length)],
-    [voice],
-  )
-
   // Guarda QUAL arte falhou, em vez de um booleano: trocar de imagem volta a
   // tentar carregar em vez de herdar a falha anterior.
   const [failed, setFailed] = useState<string | null>(null)
-  const showArt = Boolean(portrait) && failed !== portrait
+  const showArt = failed !== portrait
 
   // A saudação é sempre a primeira; as outras entram quando o Joshua clica.
   const script = useMemo(() => [voice.greeting, ...voice.lines], [voice])
@@ -65,39 +66,49 @@ export default function HeroSpeech({
   }
 
   return (
-    <div className="tjv-fade mb-6 flex items-stretch gap-3 sm:gap-4">
-      {/* ---- Retrato do herói ---- */}
+    <div className="tjv-fade mb-7 flex items-end gap-3 sm:gap-5">
+      {/* ---- O herói ao lado da fala ----
+           As artes são cenas inteiras (não recortes do personagem), então elas
+           ficam numa moldura alta com a cor do herói e um degradê por baixo —
+           é o que fica bonito sem recorte. Quem dá o efeito de "personagem na
+           tela" é a arte grande e transparente ao fundo, no Layout. */}
       <div
-        className="relative shrink-0 overflow-hidden rounded-2xl border w-24 sm:w-36"
-        style={{ borderColor: `${color}55`, backgroundColor: '#0b1428' }}
+        className="relative shrink-0 w-28 sm:w-44 aspect-[3/4] overflow-hidden rounded-2xl border"
+        style={{ borderColor: `${color}66`, boxShadow: `0 14px 34px -12px ${color}80` }}
       >
         {showArt ? (
           <img
             src={portrait}
             alt={voice.name}
             onError={() => setFailed(portrait)}
-            className="h-full w-full object-cover object-[center_22%]"
+            className="tjv-arrive h-full w-full object-cover object-[center_20%]"
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center py-6">
-            <HeroEmblem emblem={emblem} size={56} alive />
+          <div className="flex h-full w-full items-center justify-center bg-surface">
+            <HeroLogo logo={logo} emblem={emblem} color={color} invert={invertLogo} size={64} />
           </div>
         )}
 
-        {/* véu de cor por cima da foto, para casar com a paleta do módulo */}
+        {/* funde a arte no fundo da página em vez de cortar seco */}
         <span
           aria-hidden
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0"
           style={{
-            background: `linear-gradient(160deg, transparent 45%, ${color}33 100%)`,
+            background: `linear-gradient(180deg, transparent 45%, ${color}22 72%, rgba(8,9,12,0.92) 100%)`,
           }}
         />
-        {/* selo do emblema no canto, mesmo com foto */}
-        {showArt && (
-          <span className="absolute bottom-1.5 right-1.5 rounded-full bg-bg/75 p-1 backdrop-blur-sm">
-            <HeroEmblem emblem={emblem} size={20} alive />
-          </span>
-        )}
+
+        {/* logo oficial do herói selada no canto da moldura */}
+        <span className="absolute bottom-1.5 right-1.5">
+          <HeroLogo
+            logo={logo}
+            emblem={emblem}
+            color={color}
+            invert={invertLogo}
+            size={26}
+            halo={false}
+          />
+        </span>
       </div>
 
       {/* ---- Balão de fala ---- */}
@@ -105,24 +116,38 @@ export default function HeroSpeech({
         type="button"
         onClick={advance}
         aria-label="Ouvir outra fala do herói"
-        className="group relative flex-1 min-w-0 text-left rounded-2xl border border-border-soft
-                   bg-surface px-4 py-3.5 sm:px-5 sm:py-4 transition-colors hover:border-border"
+        className="group relative flex-1 min-w-0 mb-3 text-left rounded-2xl border
+                   bg-surface/85 backdrop-blur-sm px-4 py-3.5 sm:px-5 sm:py-4
+                   transition-colors"
+        style={{ borderColor: `${color}44` }}
       >
-        {/* bico do balão apontando para a arte */}
+        {/* bico do balão apontando para o herói */}
         <span
           aria-hidden
-          className="absolute left-[-7px] top-8 h-3 w-3 rotate-45 border-b border-l
-                     border-border-soft bg-surface"
+          className="absolute left-[-7px] bottom-7 h-3 w-3 rotate-45 border-b border-l
+                     bg-surface"
+          style={{ borderColor: `${color}44` }}
         />
 
-        <p
-          className="text-[10px] font-bold uppercase tracking-[0.18em]"
-          style={{ color }}
-        >
-          {voice.name}
-        </p>
+        <span className="flex items-center gap-2">
+          <HeroLogo
+            logo={logo}
+            emblem={emblem}
+            color={color}
+            invert={invertLogo}
+            size={20}
+            halo={false}
+            float={false}
+          />
+          <span
+            className="text-[10px] font-bold uppercase tracking-[0.18em]"
+            style={{ color }}
+          >
+            {voice.name}
+          </span>
+        </span>
 
-        <p className="mt-1.5 text-sm sm:text-[15px] leading-relaxed text-text">
+        <p className="mt-2 text-sm sm:text-[15px] leading-relaxed text-text">
           {typed}
           {!done && (
             <span

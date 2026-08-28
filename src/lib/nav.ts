@@ -25,8 +25,16 @@ export type NavItem = {
   color: string
   /** Herói associado ao módulo, escolhido pelo Joshua. */
   hero: string
-  /** Emblema desenhado desse herói. */
+  /** Emblema desenhado desse herói (reserva, se a logo não carregar). */
   emblem: EmblemId
+  /**
+   * Logo oficial do herói, escolhida pelo Joshua. Os arquivos originais estão
+   * em `public/herois/logo*.jpg`; `scripts/logos-transparentes.mjs` tira o
+   * fundo e gera os PNGs em `public/logos/`.
+   */
+  logo: string
+  /** A logo é preta (Homem-Aranha): precisa inverter para aparecer no escuro. */
+  invertLogo?: boolean
 }
 
 /**
@@ -45,6 +53,7 @@ export const MODULES: NavItem[] = [
     color: '#e0263c',
     hero: 'Vingadores',
     emblem: 'avengers',
+    logo: '/logos/avenger.png',
   },
   {
     path: '/agenda',
@@ -55,6 +64,7 @@ export const MODULES: NavItem[] = [
     color: '#ff9a3c',
     hero: 'Doutor Estranho',
     emblem: 'portal',
+    logo: '/logos/doutorestranho.png',
   },
   {
     path: '/financas',
@@ -65,6 +75,7 @@ export const MODULES: NavItem[] = [
     color: '#e0263c',
     hero: 'Capitão América',
     emblem: 'shield',
+    logo: '/logos/capitao.png',
   },
   {
     path: '/tarefas',
@@ -75,6 +86,7 @@ export const MODULES: NavItem[] = [
     color: '#f0a92c',
     hero: 'Homem de Ferro',
     emblem: 'reactor',
+    logo: '/logos/homemdeferro.png',
   },
   {
     path: '/metas',
@@ -85,6 +97,8 @@ export const MODULES: NavItem[] = [
     color: '#e34a4a',
     hero: 'Homem-Aranha',
     emblem: 'web',
+    logo: '/logos/homemaranha.png',
+    invertLogo: true,
   },
   {
     path: '/habitos',
@@ -95,6 +109,7 @@ export const MODULES: NavItem[] = [
     color: '#6db3f2',
     hero: 'Thor',
     emblem: 'hammer',
+    logo: '/logos/thor.png',
   },
   {
     path: '/projetos',
@@ -105,6 +120,7 @@ export const MODULES: NavItem[] = [
     color: '#9d7ce0',
     hero: 'Pantera Negra',
     emblem: 'claws',
+    logo: '/logos/pantera.png',
   },
   {
     path: '/estudos',
@@ -115,6 +131,7 @@ export const MODULES: NavItem[] = [
     color: '#4caf50',
     hero: 'Bruce Banner',
     emblem: 'flask',
+    logo: '/logos/hulk.png',
   },
   {
     path: '/saude',
@@ -125,6 +142,7 @@ export const MODULES: NavItem[] = [
     color: '#ff7ac0',
     hero: 'Guardiões da Galáxia',
     emblem: 'guardians',
+    logo: '/logos/guardioes.png',
   },
   {
     path: '/notas',
@@ -135,6 +153,7 @@ export const MODULES: NavItem[] = [
     color: '#f5c33b',
     hero: 'Visão',
     emblem: 'gem',
+    logo: '/logos/visao.png',
   },
   {
     path: '/assistente',
@@ -145,6 +164,7 @@ export const MODULES: NavItem[] = [
     color: '#ffa63f',
     hero: 'F.R.I.D.A.Y.',
     emblem: 'core',
+    logo: '/logos/friday.png',
   },
   {
     path: '/configuracoes',
@@ -155,6 +175,7 @@ export const MODULES: NavItem[] = [
     color: '#4a8fe0',
     hero: 'Quarteto Fantástico',
     emblem: 'four',
+    logo: '/logos/quarteto.png',
   },
 ]
 

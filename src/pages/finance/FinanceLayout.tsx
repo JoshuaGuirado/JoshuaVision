@@ -1,5 +1,4 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import HeroBanner from '../../components/HeroBanner'
 
 const TABS = [
   { to: '/financas', label: 'Dashboard', end: true },
@@ -11,16 +10,8 @@ const TABS = [
 export default function FinanceLayout() {
   return (
     <div>
-      {/* A arte é opcional: se /public/herois/capitao.png não existir, o banner
-          mostra só o escudo desenhado. */}
-      <HeroBanner
-        hero="Capitão América"
-        emblem="shield"
-        color="#e0263c"
-        image="/herois/capitao-1.jpg"
-        tagline="Disciplina e defesa do seu patrimônio"
-      />
-
+      {/* O Capitão fala com o Joshua pelo `HeroSpeech` do Layout — aqui ficam
+          só as abas do módulo. */}
       <nav className="flex gap-1 mb-6 border-b border-border overflow-x-auto">
         {TABS.map(({ to, label, end }) => (
           <NavLink

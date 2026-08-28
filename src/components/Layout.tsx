@@ -1,8 +1,10 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { findModule } from '../lib/nav'
+import { heroVoiceFor } from '../lib/heroVoice'
 import { LogoMark } from './Logo'
 import HeroEmblem from './HeroEmblem'
+import HeroSpeech from './HeroSpeech'
 
 /**
  * Casca das telas internas. A Home fica fora daqui de propósito — lá o Joshua
@@ -11,6 +13,7 @@ import HeroEmblem from './HeroEmblem'
 export default function Layout() {
   const { pathname } = useLocation()
   const active = findModule(pathname)
+  const voice = active ? heroVoiceFor(active.path) : undefined
 
   return (
     <div className="min-h-svh">
@@ -49,6 +52,17 @@ export default function Layout() {
       </header>
 
       <main className="max-w-5xl mx-auto px-5 sm:px-8 py-7 sm:py-10">
+        {/* O herói do módulo recebe o Joshua em toda tela interna.
+            A `key` reinicia a fala ao trocar de módulo. */}
+        {active && voice && (
+          <HeroSpeech
+            key={active.path}
+            voice={voice}
+            emblem={active.emblem}
+            color={active.color}
+          />
+        )}
+
         <Outlet />
       </main>
     </div>

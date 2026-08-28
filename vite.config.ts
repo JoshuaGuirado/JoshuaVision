@@ -4,6 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  // Respeita a porta pedida pelo ambiente (PORT); sem ela, usa a padrão do Vite.
+  server: process.env.PORT ? { port: Number(process.env.PORT) } : undefined,
   plugins: [
     react(),
     tailwindcss(),

@@ -1,7 +1,27 @@
-Coloque aqui as imagens dos herois.
+ARTES DOS HEROIS
+================
 
-O modulo de Financas procura por: capitao.png
-Se o arquivo nao existir, o site mostra o escudo desenhado no lugar
-(nada quebra).
+Cada modulo tem um heroi que fala com voce na tela. A arte dele sai daqui.
 
-Para adicionar: salve a imagem nesta pasta com o nome exato acima.
+Quem usa cada arquivo esta escrito em src/lib/heroVoice.ts:
+
+  Hoje ............ avengerjuntos-1/2/3.jpg   (Vingadores)
+  Agenda .......... doutorestranho-1/2/3.jpg  (Doutor Estranho)
+  Financas ........ capitao-1..5.jpg          (Capitao America)
+  Tarefas ......... homemdeferro-1/2/3.jpg    (Homem de Ferro)
+  Metas ........... homemaranha-1/2/3.jpg     (Homem-Aranha)
+  Habitos ......... thor-1/2/3.jpg            (Thor)
+  Projetos ........ panteranegra-1/2/3.jpg    (Pantera Negra)
+  Estudos ......... hulk-1/2/3.jpg            (Bruce Banner)
+  Saude ........... guardioesdagalaxia-1/2/3.jpg (Guardioes)
+  Notas ........... visao-1/2/3.jpg           (Visao)
+  Assistente ...... friday-1.jpg              (F.R.I.D.A.Y.)
+  Configuracoes ... quarteto-1/2/3.jpg        (Quarteto Fantastico)
+
+O site sorteia UMA das artes de cada heroi a cada visita ao modulo.
+
+Para adicionar mais artes: salve o arquivo nesta pasta seguindo o mesmo
+padrao de nome (ex: thor-4.jpg) e me peca para incluir na lista.
+
+Se um arquivo faltar, o site mostra o emblema desenhado no lugar.
+Nada quebra.
